@@ -10,10 +10,7 @@ import loading from '../assets/loading.gif'
 const DetallesProductos = ({
     productos,
     cargando,
-    cart,
-    eliminarProductoCarrito,
     agregarProductoCarrito,
-    vaciarCarrito
 }) => {
 
     const { id } = useParams();
@@ -52,10 +49,15 @@ const DetallesProductos = ({
 
     return (
         <>
-            <Header/>
+            <Header />
             <main className="main-content">
-                <div className="hero-section detalle-producto-center">
-                    <div className="feature-card detalle-producto-card">
+                <div className="hero-section">
+                    <h1 className="main-title">
+                        <i className="fa-solid fa-paw" style={{ marginRight: "0.5em" }}></i>
+                        Detalle de producto
+                    </h1>
+
+                   <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
                         <Productos key={producto.id}
                             producto={producto}
                             agregarProductoCarrito={agregarProductoCarrito}

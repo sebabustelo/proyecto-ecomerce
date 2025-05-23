@@ -25,9 +25,12 @@ const Contactos = ({cart}) => {
             <Header cartItems={cart} />
             <main className="main-content">
                 <div className="hero-section">
-                    <h1 className="main-title">Contáctanos</h1>
+                    <h1 className="main-title">
+                        <i className="fa-solid fa-envelope" style={{ marginRight: "0.5em" }}></i>
+                        Contáctanos
+                    </h1>
                     <p className="subtitle">Estamos aquí para ayudarte</p>
-                    <p>Si tienes alguna pregunta o necesitas más información sobre nuestros productos, no dudes en contactarnos. Estamos aquí para ayudarte a encontrar lo mejor para tu mascota.</p>
+                    <p className="contacto-info-box">Si tienes alguna pregunta o necesitas más información sobre nuestros productos, no dudes en contactarnos. Estamos aquí para ayudarte a encontrar lo mejor para tu mascota.</p>
                     
                     <form className="contact-form" onSubmit={handleSubmit}>
                         <input

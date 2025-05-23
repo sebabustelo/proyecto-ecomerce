@@ -43,7 +43,7 @@ h1 {
 }
 
 .hero-section {
-    background-color: var(--orange);   
+    background: #f5f8f4;
     border-radius: 12px;   
     text-align: center;
     border: 1px solid var(--light-green);
@@ -78,6 +78,7 @@ h1 {
 .feature-card {
     background: white;
     padding: 1rem;
+    margin:1rem 1rem 1rem 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -181,4 +182,8 @@ h1 {
   font-size: 1.2rem;
   min-width: 260px;
   text-align: center;
+}
+
+.loading-img {
+  filter: brightness(0) saturate(100%) invert(36%) sepia(77%) saturate(355%) hue-rotate(85deg) brightness(90%) contrast(90%);
 }

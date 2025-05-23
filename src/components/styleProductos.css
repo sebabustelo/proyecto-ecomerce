@@ -7,6 +7,7 @@
     flex-direction: column;
     align-items: center;    
     transition: box-shadow 0.3s ease;
+    margin-bottom: 10px;
 }
 
 .imgContainer {
@@ -126,6 +127,7 @@
     text-decoration: none;
     font-weight: 700;
     padding: 0.5rem 1.1rem;
+    margin-bottom: 10px;
     border-radius: 8px;
     transition: background 0.3s, color 0.3s, box-shadow 0.3s;
     display: inline-block;
@@ -135,9 +137,9 @@
 
 .volver-galeria-btn:hover,
 .volver-galeria-btn:focus {
-    background: var(--orange, #FFB74D);
+    background: var(--orange, #fffbe7);
     color: var(--dark-green);
-    box-shadow: 0 2px 12px rgba(255,183,77,0.18);
+    box-shadow: 0 2px 12px rgba(43, 42, 40, 0.18);
     text-decoration: none;
     outline: none;
 }
@@ -147,7 +149,9 @@
     border: 2px solid #FFB74D;
     border-radius: 10px;
     padding: 1.1em 1.3em;
-    margin: 1.2em 0 1.5em 0;
+    margin: 0 auto;
+    margin-left: 20px;
+    margin-right: 20px;
     font-size: 1.08rem;
     color: #1A5632;
     font-weight: 500;

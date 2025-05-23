@@ -9,11 +9,14 @@ const Home = ({ cart }) => {
     
     return (
         <>
-            <Header cartItems={cart} />
+            <Header />
 
             <main className="main-content">
                 <div className="hero-section">
-                    <h1 className="main-title">Cuchas y accesorios <span className="highlight">premium</span> para mascotas 🐕</h1>
+                    <h1 className="main-title">
+                        <i className="fa-solid fa-dog" style={{ marginRight: "0.5em",  }}></i>
+                        Cuchas y accesorios <span className="highlight">premium</span> para mascotas 
+                    </h1>
                                   
                     <div className="features-grid" >
                         <Link to="/productos" className="feature-card" 

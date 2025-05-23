@@ -21,7 +21,7 @@ const Footer = () => {
                 <div className="footer-section" style={{ display: "flex", gap: "1.5rem", alignItems: "center", justifyContent: "center", flexWrap: "wrap", fontSize: "1rem" }}>
                     <span>Email: info@tienda.com</span>
                     <span>Tel: (11) 4561-7890</span>
-                    <span>Dirección: Jua Agustín Garcia 1855</span>
+                    <span>Dirección: Juan Agustín Garcia 1855</span>
                     <span> &copy; 2025 Tienda Online.</span>
                 </div>
                 
