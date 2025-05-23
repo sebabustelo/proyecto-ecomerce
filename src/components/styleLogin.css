@@ -1,0 +1,65 @@
+/* Login.css */
+.login-card {
+    background: #fff;
+    max-width: 370px;
+    margin: 0rem auto;
+    padding: 2rem 2rem 2rem 2rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(44,62,80,0.10);
+    animation: fadeIn 0.7s;
+}
+
+.login-form .form-group {
+    margin-bottom: 1.3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #1A5632;
+}
+
+.login-form input {
+    padding: 0.7rem;
+    border: 1px solid #FFB74D;
+    border-radius: 7px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.login-form input:focus {
+    border-color: #1A5632;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 0.8rem;
+    color: white;
+    background: #1A5632;
+    border: none;
+    border-radius: 7px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+}
+
+.login-btn:hover {
+    background: #2E8B57;
+}
+
+.register-link {
+    margin-top: 1.2rem;
+    text-align: center;
+    font-size: 0.98rem;
+}
+
+.register-link a {
+    color: #1A5632;
+    font-weight: 600;
+    text-decoration: underline;
+}

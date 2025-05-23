@@ -1,0 +1,33 @@
+/* filepath: d:\Seba\React_JS\proyecto-ecomerce\src\pages\styleContactos.css */
+.contact-form input,
+.contact-form textarea {
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+    width: 100%;
+    font-size: 1rem;
+}
+.contact-form button[type="submit"] {
+    background: var(--dark-green, #1A5632);
+    color: white;
+    font-weight: 700;
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    border: none;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 1px 6px rgba(255,183,77,0.08);
+    font-size: 1rem;
+    margin-top: 0.2rem;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.contact-form button[type="submit"]:hover,
+.contact-form button[type="submit"]:focus {
+    background: var(--orange, #FFB74D);
+    color: var(--dark-green, #1A5632);
+    box-shadow: 0 2px 12px rgba(255,183,77,0.18);
+    outline: none;
+    text-decoration: none;
+}
