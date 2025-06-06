@@ -2,11 +2,12 @@ import React from "react";
 import Header from "../components/estaticos/Header";
 import Footer from "../components/estaticos/Footer";
 import "./../admin.css"; // crea este archivo o agrega los estilos a tu CSS global
+import HeaderAdmin from "../components/estaticos/HeaderAdmin";
 
 const Admin = () => {
   return (
     <>
-      <Header />
+      <HeaderAdmin />
       <main className="main-content">
         <div className="hero-section">
           <h1 className="main-title admin-title">Panel de Administración</h1>

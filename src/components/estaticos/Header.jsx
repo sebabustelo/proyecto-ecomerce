@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import './styleEstatico.css';
 import Cart from '../Cart';
 
-
-
 const Header = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
+    const [isUserMenuOpen, setUserMenuOpen] = useState(false);
 
     const handleToggle = () => setOpen(!open);
     const handleClose = () => setOpen(false);
+    const toggleUserMenu = () => setUserMenuOpen(!isUserMenuOpen);
 
     return (
         <header className="header">
@@ -37,15 +37,33 @@ const Header = () => {
                         <Link to="/contactos" className='nav-link' onClick={handleClose}>Contactos</Link>
                     </li>
                 </ul>
-                {/* Carrito fuera del menú hamburguesa */}
-                <div className="cart-icon-container nav-item">
-                    <button className='nav-link' onClick={() => setCartOpen(true)} >
-                        <i className="fa-solid fa-cart-shopping"></i>
-                    </button>
-                    <Cart                        
-                        isOpen={isCartOpen}
-                        onClose={() => setCartOpen(false)}                                               
-                    />
+                <div className="nav-icons">
+                    {/* User Menu */}
+                    <div className="user-menu-container nav-item">
+                        <button className='nav-link' onClick={toggleUserMenu}>
+                            <i className="fa-solid fa-user"></i>
+                        </button>
+                        {isUserMenuOpen && (
+                            <div className="user-dropdown">
+                                <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                    <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                                </Link>
+                                <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                    <i className="fa-solid fa-user-plus"></i> Registrarse
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                    {/* Cart Icon */}
+                    <div className="cart-icon-container nav-item">
+                        <button className='nav-link' onClick={() => setCartOpen(true)}>
+                            <i className="fa-solid fa-cart-shopping"></i>
+                        </button>
+                        <Cart                        
+                            isOpen={isCartOpen}
+                            onClose={() => setCartOpen(false)}                                               
+                        />
+                    </div>
                 </div>
             </nav>
         </header>
