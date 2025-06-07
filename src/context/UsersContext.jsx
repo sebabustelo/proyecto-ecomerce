@@ -43,8 +43,17 @@ export const UsersProvider = ({ children }) => {
             });
 
             if (!response.ok) {
+                //redirigir al login
                 const errorText = await response.text();            
-                throw new Error(`Failed to fetch users: ${response.status} - ${errorText}`);
+                if (response.status === 401 || response.status === 403) {
+                    setError(`Error : ${errorText}`);
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                
+                
             }
 
             const data = await response.json();            
