@@ -42,7 +42,8 @@
     background-color: #f8f9fa;
 }
 
-.users-list th {
+.users-list th,
+.users-list td {
     padding: 1rem;
     border-bottom: 2px solid #dee2e6;
     white-space: nowrap;
@@ -54,11 +55,6 @@
 
 .users-list tbody tr:hover {
     background-color: #f8f9fa;
-}
-
-.users-list td {
-    padding: 1rem;
-    vertical-align: middle;
 }
 
 .role-badge {
@@ -139,11 +135,20 @@
         padding: 1rem;
         margin: 1rem;
     }
+
+    .users-list table th:nth-child(2),
+    .users-list table td:nth-child(2) {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 480px) {
     .main-title {
         font-size: 1.3rem;
+    }
+
+    .users-list table {
+        min-width: 400px;
     }
 
     .users-list th,
@@ -268,4 +273,85 @@
     margin: 2rem auto;
     width: 50px;
     height: 50px;
+}
+
+/* Estilos para la barra de búsqueda */
+.search-container {
+    margin: 1rem 0;
+    padding: 0 1rem;
+}
+
+.search-box {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.clear-search {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-search:hover {
+    color: #333;
+}
+
+/* Ajustes responsive para la búsqueda */
+@media screen and (max-width: 768px) {
+    .search-container {
+        padding: 0 0.5rem;
+    }
+    
+    .search-input {
+        padding: 0.5rem 2.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .search-box {
+        max-width: 100%;
+    }
+}
+
+/* Estilos base para la celda de descripción */
+.description-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
 }

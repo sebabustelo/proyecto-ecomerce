@@ -7,6 +7,8 @@ import './Users.css';
 
 const AdminProductos = () => {
     const [productos, setProductos] = useState([]);
+    const [filteredProductos, setFilteredProductos] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -33,7 +35,9 @@ const AdminProductos = () => {
                 });
                 if (!response.ok) throw new Error('Error al obtener productos');
                 const data = await response.json();
-                setProductos(data.data || data);
+                const productosData = data.data || data;
+                setProductos(productosData);
+                setFilteredProductos(productosData);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -42,6 +46,26 @@ const AdminProductos = () => {
         };
         fetchProductos();
     }, []);
+
+    // Función para filtrar productos
+    useEffect(() => {
+        const filtered = productos.filter(producto => {
+            const searchTermLower = searchTerm.toLowerCase();
+            return (
+                (producto.name || producto.Name || '').toLowerCase().includes(searchTermLower) ||
+                (producto.description || producto.Description || '').toLowerCase().includes(searchTermLower) ||
+                (producto.price || producto.Price || '').toString().includes(searchTermLower) ||
+                (producto.stock || producto.Stock || '').toString().includes(searchTermLower)
+            );
+        });
+        setFilteredProductos(filtered);
+    }, [searchTerm, productos]);
+
+    // Función para truncar texto
+    const truncateText = (text, maxLength = 100) => {
+        if (!text) return '';
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    };
 
     const handleDelete = async (productId) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este producto?')) {
@@ -64,15 +88,36 @@ const AdminProductos = () => {
                     <i className="fa-solid fa-box" style={{ marginRight: "0.5em" }}></i>
                     Productos
                 </h1>
+
+                {/* Barra de búsqueda */}
+                <div className="search-container">
+                    <div className="search-box">
+                        <i className="fa-solid fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            placeholder="Buscar productos..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                        {searchTerm && (
+                            <button
+                                className="clear-search"
+                                onClick={() => setSearchTerm('')}
+                            >
+                                <i className="fa-solid fa-times"></i>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
                 {loading ? (
                     <img src={loading_img} alt="Cargando..." className="loading-img" />
                 ) : (
                     <div className="users-list">
-
                         <table>
                             <thead>
                                 <tr>
-
                                     <th>Nombre</th>
                                     <th>Descripción</th>
                                     <th>Precio</th>
@@ -81,11 +126,13 @@ const AdminProductos = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Array.isArray(productos) && productos.length > 0 ? (
-                                    productos.map((producto) => (
+                                {Array.isArray(filteredProductos) && filteredProductos.length > 0 ? (
+                                    filteredProductos.map((producto) => (
                                         <tr key={producto.id || producto.ID}>
                                             <td>{producto.name || producto.Name}</td>
-                                            <td>{producto.description || producto.Description}</td>
+                                            <td className="description-cell" title={producto.description || producto.Description}>
+                                                {truncateText(producto.description || producto.Description)}
+                                            </td>
                                             <td>${producto.price || producto.Price}</td>
                                             <td>{producto.stock || producto.Stock}</td>
                                             <td>
@@ -120,21 +167,20 @@ const AdminProductos = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" style={{ textAlign: 'center' }}>
-                                            {loading ? 'Cargando productos...' : 'No hay productos disponibles'}
+                                        <td colSpan="5" style={{ textAlign: 'center' }}>
+                                            {searchTerm ? 'No se encontraron productos' : 'No hay productos disponibles'}
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan="6" style={{ textAlign: 'center', fontWeight: 'bold' }}>
-                                        Total de productos: {Array.isArray(productos) ? productos.length : 0}
+                                    <td colSpan="5" style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                        Total de productos: {filteredProductos.length}
                                     </td>
                                 </tr>
                             </tfoot>
                         </table>
-
 
                         {showModal && (
                             <div className="modal">
