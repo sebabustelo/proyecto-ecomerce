@@ -199,44 +199,112 @@ footer {
     height: 25px;
     justify-content: space-between;
     margin-right: 16px;
+    z-index: 2100;
 }
 
 .bar {
     height: 4px;
     width: 100%;
-    background: #333;
+    background: white;
     border-radius: 2px;
     transition: 0.3s;
 }
 
 @media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+        position: relative;
+        z-index: 2100;
+    }
+
     .nav-list {
         position: fixed;
-        top: 80px; /* Ajusta según la altura real de tu header */
-        right: 1.8%;
+        top: 73px;
+        right: 8px;
         background: var(--dark-green);
         flex-direction: column;
-        width: 30vw;
-        max-width: 260px;
-        
+        width: 200px;
+        height: calc(100vh - 80px);
         box-shadow: -2px 0 16px rgba(0,0,0,0.18);
         transform: translateX(100%);
         transition: transform 0.3s ease;
         z-index: 2000;
-        padding: 0rem 0 0 0;
-        align-items: flex-end;
+        padding: 2rem 0;
+        align-items: center;
     }
+
     .nav-list.open {
         transform: translateX(0);
     }
+
     .nav-list .nav-item {
-        
-        text-align: left;
-        padding-right: 14px;
+        width: 100%;
+        text-align: center;
+        padding: 1rem 0;
     }
-    .hamburger {
-        display: flex;
+
+    .nav-list .nav-link {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.2rem;
+        color: white;
+        background: transparent;
+        transition: background 0.3s ease;
+    }
+
+    .nav-list .nav-link:hover {
+        background: rgba(255, 183, 77, 0.18);
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(10px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-10px) rotate(-45deg);
+    }
+
+    .cart-icon-container {
+        position: fixed;
+        top: 1rem;
+        right: 4rem;
         z-index: 2100;
+    }
+
+    .cart-icon-container .nav-link {
+        padding: 0.4rem;
+        font-size: 1.1rem;
+        background: rgba(255, 183, 77, 0.18);
+    }
+
+    .fa-cart-shopping {
+        margin-right: 0;
+        font-size: 1.1rem;
+        color: white;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-list {
+        padding: 1.5rem 0;
+    }
+
+    .nav-list .nav-item {
+        padding: 0.8rem 0;
+    }
+
+    .nav-list .nav-link {
+        padding: 0.8rem;
+        font-size: 1.1rem;
+    }
+
+    .cart-icon-container {
+        right: 3.5rem;
     }
 }
 

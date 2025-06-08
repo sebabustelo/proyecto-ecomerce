@@ -6,10 +6,8 @@ const Registrarse = () => {
     return (
         <>
             <Header />
-            <div className="main-content">
-                <div className="hero-section">
-                    <Register />
-                </div>
+            <div className="main-content">                
+                    <Register />                
             </div>
             <Footer />
         </>

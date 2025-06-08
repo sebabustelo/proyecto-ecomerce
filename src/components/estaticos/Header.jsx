@@ -36,35 +36,36 @@ const Header = () => {
                     <li className="nav-item">
                         <Link to="/contactos" className='nav-link' onClick={handleClose}>Contactos</Link>
                     </li>
+                    <div className="nav-icons">
+                        {/* User Menu */}
+                        <div className="user-menu-container nav-item">
+                            <button className='nav-link' onClick={toggleUserMenu}>
+                                <i className="fa-solid fa-user"></i>
+                            </button>
+                            {isUserMenuOpen && (
+                                <div className="user-dropdown">
+                                    <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                        <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                                    </Link>
+                                    <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                        <i className="fa-solid fa-user-plus"></i> Registrarse
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                        {/* Cart Icon */}
+                        <div className="user-menu-container nav-item">
+                            <button className='nav-link' onClick={() => setCartOpen(true)}>
+                                <i className="fa-solid fa-cart-shopping"></i>
+                            </button>
+                            <Cart
+                                isOpen={isCartOpen}
+                                onClose={() => setCartOpen(false)}
+                            />
+                        </div>
+                    </div>
                 </ul>
-                <div className="nav-icons">
-                    {/* User Menu */}
-                    <div className="user-menu-container nav-item">
-                        <button className='nav-link' onClick={toggleUserMenu}>
-                            <i className="fa-solid fa-user"></i>
-                        </button>
-                        {isUserMenuOpen && (
-                            <div className="user-dropdown">
-                                <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                                    <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
-                                </Link>
-                                <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                                    <i className="fa-solid fa-user-plus"></i> Registrarse
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                    {/* Cart Icon */}
-                    <div className="cart-icon-container nav-item">
-                        <button className='nav-link' onClick={() => setCartOpen(true)}>
-                            <i className="fa-solid fa-cart-shopping"></i>
-                        </button>
-                        <Cart                        
-                            isOpen={isCartOpen}
-                            onClose={() => setCartOpen(false)}                                               
-                        />
-                    </div>
-                </div>
+
             </nav>
         </header>
     );

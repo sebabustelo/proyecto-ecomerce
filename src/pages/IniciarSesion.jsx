@@ -10,9 +10,9 @@ const IniciarSesion = ({ setIsAuthenticated }) => {
 
             <Header />
             <div className="main-content">
-                <div className="hero-section">
+              
                     <Login setIsAuthenticated={setIsAuthenticated} />
-                </div>
+              
             </div>
             <Footer />
         </>
