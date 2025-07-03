@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './styleEstatico.css';
 import Cart from '../Cart';
+import { useAuth } from '../../context/AuthContext';
 
 
 
 const Header = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const handleToggle = () => setOpen(!open);
     const handleClose = () => setOpen(false);
@@ -36,8 +39,13 @@ const Header = () => {
                     <li className="nav-item">
                         <Link to="/pedidos" className='nav-link' onClick={handleClose}>Pedidos</Link>
                     </li>
-                   
-
+                    {user && (
+                        <li className="nav-item">
+                            <Link to="/" className="nav-link" onClick={() => { logout(); navigate('/'); }}>
+                                <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                            </Link>
+                        </li>
+                    )}
                 </ul>
                 {/* Carrito fuera del menú hamburguesa */}
                 <div className="cart-icon-container nav-item">

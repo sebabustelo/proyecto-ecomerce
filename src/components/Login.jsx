@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import './styleLogin.css'
-import { auth, googleProvider, facebookProvider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
+import { useAuth } from '../context/AuthContext';
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = () => {
     const [form, setForm] = useState({ email: "", password: "" });
-    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { loginWithEmail, loginWithGoogle, loginWithFacebook, error, setError } = useAuth();
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-        setError("");
+        setError(null);
     };
 
     const handleSubmit = async (e) => {
@@ -20,85 +20,45 @@ const Login = ({ setIsAuthenticated }) => {
             setError("Por favor completa todos los campos.");
             return;
         }
+       
         try {
-            console.log('Attempting login with:', form.email); // Debug log
-            const response = await fetch("http://localhost:8229/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    user: form.email,
-                    password: form.password
-                })
-            });
-
-            console.log('Login response status:', response.status); // Debug log
-
-            if (!response.ok) {
-                const data = await response.json();
-                console.error('Login error:', data); // Debug log
-                setError(data.message || "Credenciales incorrectas.");
-                return;
-            }
-
-            const data = await response.json();
-            console.log('Login successful, token received'); // Debug log
-            
-            // Store the token
-            if (data.token) {
-                localStorage.setItem("token", data.token);
-                console.log('Token stored in localStorage'); // Debug log
-                setIsAuthenticated(true);
-                
-                navigate("/admin");
-            } else {
-                console.error('No token in response:', data); // Debug log
-                setError("Error: No se recibió el token de autenticación.");
-            }
-        } catch (err) {
-            console.error('Login error:', err); // Debug log
-            setError("Error de conexión con el servidor.");
+            await loginWithEmail(form.email, form.password);
+            setIsLoading(true);
+            navigate("/admin");
+        } catch (error) {
+            console.error('Login error:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleGoogleLogin = async () => {
+        setIsLoading(true);
         try {
-            const result = await signInWithPopup(auth, googleProvider);
-            console.log('Google login successful:', result); // Debug log
-            // Store the token from Google auth
-            if (result.user.accessToken) {
-                localStorage.setItem("token", result.user.accessToken);
-                console.log('Google token stored in localStorage'); // Debug log
-            }
-            setIsAuthenticated(true);
-            navigate("/admin");
+            await loginWithGoogle();
+            // No necesitamos navegar aquí porque redirect lo maneja
         } catch (error) {
-            console.error('Google login error:', error); // Debug log
-            alert("Error con Google: " + error.message);
+            console.error('Google login error:', error);
+            setIsLoading(false);
         }
     };
 
     const handleFacebookLogin = async () => {
+        setIsLoading(true);
         try {
-            const result = await signInWithPopup(auth, facebookProvider);
-            console.log('Facebook login successful:', result); // Debug log
-            // Store the token from Facebook auth
-            if (result.user.accessToken) {
-                localStorage.setItem("token", result.user.accessToken);
-                console.log('Facebook token stored in localStorage'); // Debug log
-            }
-            setIsAuthenticated(true);
-            navigate("/admin");
+            await loginWithFacebook();
+            // No necesitamos navegar aquí porque redirect lo maneja
         } catch (error) {
-            console.error('Facebook login error:', error); // Debug log
-            alert("Error con Facebook: " + error.message);
+            console.error('Facebook login error:', error);
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="login-card">
-            <h2 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#1A5632" }}>Iniciar Sesión</h2>
+            <h2 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#1A5632" }}>
+                Iniciar Sesión
+            </h2>
             <form className="login-form" onSubmit={handleSubmit} autoComplete="off">
                 <div className="form-group">
                     <label htmlFor="email">Email:</label>
@@ -109,6 +69,7 @@ const Login = ({ setIsAuthenticated }) => {
                         value={form.email}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -120,20 +81,44 @@ const Login = ({ setIsAuthenticated }) => {
                         value={form.password}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                     />
                 </div>
-                {error && <div style={{ color: "#d32f2f", marginBottom: "1rem", textAlign: "center" }}>{error}</div>}
-                <button type="submit" className="login-btn">Ingresar</button>
-                <button onClick={handleGoogleLogin} className="login-btn google" type="button">
-                    <i className="fa-brands fa-google"></i>
-                    Ingresar con Google
+                {error && (
+                    <div style={{ color: "#d32f2f", marginBottom: "1rem", textAlign: "center" }}>
+                        {error}
+                    </div>
+                )}
+                <button 
+                    type="submit" 
+                    className="login-btn"
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Iniciando sesión..." : "Ingresar"}
                 </button>
-                <button onClick={handleFacebookLogin} className="login-btn facebook" type="button">
+                <button 
+                    onClick={handleGoogleLogin} 
+                    className="login-btn google" 
+                    type="button"
+                    disabled={isLoading}
+                >
+                    <i className="fa-brands fa-google"></i>
+                    {isLoading ? "Redirigiendo..." : "Ingresar con Google"}
+                </button>
+                <button 
+                    onClick={handleFacebookLogin} 
+                    className="login-btn facebook" 
+                    type="button"
+                    disabled={isLoading}
+                >
                     <i className="fa-brands fa-facebook-f"></i>
-                    Ingresar con Facebook
+                    {isLoading ? "Redirigiendo..." : "Ingresar con Facebook"}
                 </button>
                 <p className="register-link">
                     ¿No tienes una cuenta? <Link to="/registrarse">Regístrate</Link>
+                </p>
+                <p className="forgot-password">
+                    <Link to="/reset-password">¿Olvidaste tu contraseña?</Link>
                 </p>
             </form>
         </div>

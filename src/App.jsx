@@ -15,28 +15,46 @@ import RutasProtegidas from './auth/RutasProtegidas'
 import { CartContext } from './context/CartContext'
 import { ProductProvider } from './context/ProductContext'
 import { CartProvider } from './context/CartContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { UserProvider } from './context/UserContext'
 import { UsersProvider } from './context/UsersContext'
-import CartDebug from './components/CartDebug'
+import ResetPassword from './components/ResetPassword'
 import './index.css'
 
 function App() {
   return (
     <Router>
-      <UserProvider>
-        <ProductProvider>
-          <CartProvider>
-            <AppRoutes />
-            <CartDebug />
-          </CartProvider>
-        </ProductProvider>
-      </UserProvider>
+      <AuthProvider>
+        <UserProvider>
+          <ProductProvider>
+            <CartProvider>
+              <AppRoutes />
+            </CartProvider>
+          </ProductProvider>
+        </UserProvider>
+      </AuthProvider>
     </Router>
   )
 }
 
 function AppRoutes() {
-  const { mensaje, isAuthenticated } = useContext(CartContext);
+  const { mensaje } = useContext(CartContext);
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#1A5632'
+      }}>
+        Cargando...
+      </div>
+    );
+  }
 
   return (
     <>
@@ -48,12 +66,12 @@ function AppRoutes() {
         <Route path='/contactos' element={<Contactos />} />
         <Route path='*' element={<NotFound />} />
         <Route path='/admin' element={
-          <RutasProtegidas isAuthenticated={isAuthenticated}>
+          <RutasProtegidas isAuthenticated={!!user}>
             <Admin />
           </RutasProtegidas>
         } />
         <Route path='/users' element={
-          <RutasProtegidas isAuthenticated={isAuthenticated}>
+          <RutasProtegidas isAuthenticated={!!user}>
             <UsersProvider>
               <Users />
             </UsersProvider>
@@ -61,8 +79,9 @@ function AppRoutes() {
         } />
         <Route path='/login' element={<IniciarSesion />} />
         <Route path='/registrarse' element={<Registrarse />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/admin/productos' element={
-          <RutasProtegidas isAuthenticated={isAuthenticated}>
+          <RutasProtegidas isAuthenticated={!!user}>
             <AdminProductos />
           </RutasProtegidas>
         } />

@@ -141,6 +141,44 @@ body {
     font-size: 0.95rem;
 }
 
+.register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--secondary);
+    font-size: 0.95rem;
+}
+
+.register-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.register-link a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+.forgot-password a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.forgot-password a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
 /* Animation */
 @keyframes fadeIn {
     from {

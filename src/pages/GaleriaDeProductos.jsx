@@ -22,7 +22,7 @@ const GaleriaDeProductos = () => {
           {!cargando && <SearchAndFilters />}
           
           {cargando ? (
-            <div className="loading-container">
+            <div >
               <img src={loading} alt="Cargando..." className="loading-img" />
               <p className="loading-text">Cargando productos...</p>
             </div>

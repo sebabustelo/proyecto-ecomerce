@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './styleEstatico.css';
 import Cart from '../Cart';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [isUserMenuOpen, setUserMenuOpen] = useState(false);
 
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
     const handleToggle = () => setOpen(!open);
     const handleClose = () => setOpen(false);
     const toggleUserMenu = () => setUserMenuOpen(!isUserMenuOpen);
+
+    const isAdmin = user && user.roles && user.roles.some(role => role.name === "admin");
 
     return (
         <header className="header">
@@ -36,6 +42,18 @@ const Header = () => {
                     <li className="nav-item">
                         <Link to="/contactos" className='nav-link' onClick={handleClose}>Contactos</Link>
                     </li>
+                    {isAdmin && (
+                        <li className="nav-item">
+                            <a
+                                href="/admin"
+                                className="nav-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <i className="fa-solid fa-gears"></i> Panel Admin
+                            </a>
+                        </li>
+                    )}
                     <div className="nav-icons">
                         {/* User Menu */}
                         <div className="user-menu-container nav-item">
@@ -44,12 +62,20 @@ const Header = () => {
                             </button>
                             {isUserMenuOpen && (
                                 <div className="user-dropdown">
-                                    <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                                        <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
-                                    </Link>
-                                    <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                                        <i className="fa-solid fa-user-plus"></i> Registrarse
-                                    </Link>
+                                    {user ? (
+                                        <Link to="/" className="dropdown-item" onClick={() => { logout(); setUserMenuOpen(false); navigate('/'); }}>
+                                            <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                                        </Link>
+                                    ) : (
+                                        <>
+                                            <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                                <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                                            </Link>
+                                            <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                                <i className="fa-solid fa-user-plus"></i> Registrarse
+                                            </Link>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </div>

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import './styleLogin.css';
-import { auth, googleProvider, facebookProvider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
-import { API_BASE_URL } from '../utils/apiConfig';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const [form, setForm] = useState({
@@ -12,12 +10,13 @@ const Register = () => {
         password: "",
         confirmPassword: ""
     });
-    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { registerWithEmail, loginWithGoogle, loginWithFacebook, error, setError } = useAuth();
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-        setError("");
+        setError(null);
     };
 
     const handleSubmit = async (e) => {
@@ -39,54 +38,44 @@ const Register = () => {
             return;
         }
 
+        setIsLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: form.name,
-                    user: form.email,
-                    password: form.password
-                })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                setError(data.message || "Error al registrar usuario.");
-                return;
-            }
-
-          
-        } catch (err) {
-            setError("Error de conexión con el servidor.");
+            await registerWithEmail(form.email, form.password, form.name);
+            navigate("/admin");
+        } catch (error) {
+            console.error('Register error:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleGoogleLogin = async () => {
+        setIsLoading(true);
         try {
-            await signInWithPopup(auth, googleProvider);
-            setIsAuthenticated(true);
-            navigate("/admin");
+            await loginWithGoogle();
+            // No necesitamos navegar aquí porque redirect lo maneja
         } catch (error) {
-            alert("Error con Google: " + error.message);
+            console.error('Google login error:', error);
+            setIsLoading(false);
         }
     };
 
     const handleFacebookLogin = async () => {
+        setIsLoading(true);
         try {
-            await signInWithPopup(auth, facebookProvider);
-            setIsAuthenticated(true);
-            navigate("/admin");
+            await loginWithFacebook();
+            // No necesitamos navegar aquí porque redirect lo maneja
         } catch (error) {
-            alert("Error con Facebook: " + error.message);
+            console.error('Facebook login error:', error);
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="login-card">
-            <h2 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#1A5632" }}>Registro</h2>
+            <h2 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#1A5632" }}>
+                Registro
+            </h2>
             <form className="login-form" onSubmit={handleSubmit} autoComplete="off">
                 <div className="form-group">
                     <label htmlFor="name">Nombre:</label>
@@ -97,6 +86,7 @@ const Register = () => {
                         value={form.name}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -108,6 +98,7 @@ const Register = () => {
                         value={form.email}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -119,6 +110,7 @@ const Register = () => {
                         value={form.password}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -130,20 +122,41 @@ const Register = () => {
                         value={form.confirmPassword}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                     />
                 </div>
-                {error && <div style={{ color: "#d32f2f", marginBottom: "1rem", textAlign: "center" }}>{error}</div>}
-                <button type="submit" className="login-btn">Registrarse</button>
-                <button onClick={handleGoogleLogin} className="login-btn google" type="button">
-                    <i className="fa-brands fa-google"></i>
-                    Registrarse con Google
+                {error && (
+                    <div style={{ color: "#d32f2f", marginBottom: "1rem", textAlign: "center" }}>
+                        {error}
+                    </div>
+                )}
+                <button 
+                    type="submit" 
+                    className="login-btn"
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Registrando..." : "Registrarse"}
                 </button>
-                <button onClick={handleFacebookLogin} className="login-btn facebook" type="button">
+                <button 
+                    onClick={handleGoogleLogin} 
+                    className="login-btn google" 
+                    type="button"
+                    disabled={isLoading}
+                >
+                    <i className="fa-brands fa-google"></i>
+                    {isLoading ? "Redirigiendo..." : "Registrarse con Google"}
+                </button>
+                <button 
+                    onClick={handleFacebookLogin} 
+                    className="login-btn facebook" 
+                    type="button"
+                    disabled={isLoading}
+                >
                     <i className="fa-brands fa-facebook-f"></i>
-                    Registrarse con Facebook
+                    {isLoading ? "Redirigiendo..." : "Registrarse con Facebook"}
                 </button>
                 <p className="register-link">
-                    ¿Ya tienes una cuenta? <a href="/login">Iniciar Sesión</a>
+                    ¿Ya tienes una cuenta? <Link to="/login">Iniciar Sesión</Link>
                 </p>
             </form>
         </div>
