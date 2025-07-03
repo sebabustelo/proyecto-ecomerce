@@ -150,6 +150,30 @@ h1 {
     font-weight: 500;
 }
 
+.no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.no-results h3 {
+    color: var(--primary-green);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.no-results p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+}
+
 /* Botones */
 .btn, .volver-galeria-btn {
   background: var(--primary-green);

@@ -1,15 +1,40 @@
 import React, { useContext } from 'react';
 import './styleCart.css';
 import { CartContext } from '../context/CartContext';
+import { ProductContext } from '../context/ProductContext';
 
 const Cart = ({ isOpen, onClose }) => {
-    const { cart, handleDeleteItem, handleDeleteCart } = useContext(CartContext);
-
-    const total = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+    const { 
+        cart, 
+        handleDeleteItem, 
+        handleDeleteCart, 
+        totalCarrito, 
+        cantidadItems 
+    } = useContext(CartContext);
+    
+    const { restaurarStock } = useContext(ProductContext);
 
     const handleMercadoPago = () => {
         alert("Redirigiendo a Mercado Pago...");
         // window.location.href = "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TU_PREFERENCE_ID";
+    };
+
+    const handleDeleteItemFromCart = (producto) => {
+        // Restaurar stock antes de eliminar del carrito
+        if (producto.cantidad > 1) {
+            restaurarStock(producto.id, 1);
+        } else {
+            restaurarStock(producto.id, producto.cantidad);
+        }
+        handleDeleteItem(producto);
+    };
+
+    const handleVaciarCarrito = () => {
+        // Restaurar stock de todos los productos
+        cart.forEach(item => {
+            restaurarStock(item.id, item.cantidad);
+        });
+        handleDeleteCart();
     };
 
     return (
@@ -33,7 +58,7 @@ const Cart = ({ isOpen, onClose }) => {
                                     <h3>{item.nombre} <br /> {item.cantidad} * ${item.precio} = ${item.precio * item.cantidad}</h3>
                                     <button
                                         className="deleteButton"
-                                        onClick={() => handleDeleteItem(item)}
+                                        onClick={() => handleDeleteItemFromCart(item)}
                                         title="Eliminar producto"
                                     >
                                         <i className="fa-solid fa-trash-can"></i>
@@ -41,16 +66,22 @@ const Cart = ({ isOpen, onClose }) => {
                                 </li>
                             ))}
                         </ul>
-                        <div className="cart-total">
-                            <strong>
-                                <i className="fa-solid fa-money-bill-wave" style={{ marginRight: "0.5em", color: "#1A5632" }}></i>
-                                Total: ${total}
-                            </strong>
+                        <div className="cart-summary">
+                            <div className="cart-items-count">
+                                <i className="fa-solid fa-shopping-cart"></i>
+                                {cantidadItems} {cantidadItems === 1 ? 'producto' : 'productos'}
+                            </div>
+                            <div className="cart-total">
+                                <strong>
+                                    <i className="fa-solid fa-money-bill-wave" style={{ marginRight: "0.5em", color: "#1A5632" }}></i>
+                                    Total: ${totalCarrito}
+                                </strong>
+                            </div>
                         </div>
                         <div className="cart-actions-row">
                             <button
                                 className="vaciar-carrito-btn"
-                                onClick={handleDeleteCart}
+                                onClick={handleVaciarCarrito}
                                 title="Vaciar carrito"
                             >
                                 <i className="fa-solid fa-trash-can" style={{ marginRight: "0.5em" }}></i>

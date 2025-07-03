@@ -13,72 +13,68 @@ import Users from './pages/Users'
 import AdminProductos from './pages/AdminProductos'
 import RutasProtegidas from './auth/RutasProtegidas'
 import { CartContext } from './context/CartContext'
+import { ProductProvider } from './context/ProductContext'
+import { CartProvider } from './context/CartContext'
 import { UserProvider } from './context/UserContext'
 import { UsersProvider } from './context/UsersContext'
+import CartDebug from './components/CartDebug'
 import './index.css'
 
 function App() {
-  const {
-    cart,
-    productos,
-    cargando,   
-    mensaje,
-    isAuthenticated,
-    setIsAuthenticated,
-  } = useContext(CartContext);
-
   return (
     <Router>
       <UserProvider>
-          <Routes>
-            <Route path='/' element={<Home cart={cart} />} />
-            <Route path='/acercade' element={<AcercaDe cart={cart} />} />
-            <Route path='/productos' element={
-              <GaleriaDeProductos
-                cart={cart}
-                productos={productos}           
-                cargando={cargando}
-              />
-            } />
-            <Route path='/productos/:id' element={
-              <DetallesProductos
-                cart={cart}            
-                productos={productos}
-                cargando={cargando} />
-            } />
-            <Route path='/contactos' element={<Contactos cart={cart} />} />
-            <Route path='*' element={<NotFound />} />
-            <Route path='/admin' element={<RutasProtegidas isAuthenticated={isAuthenticated}> <Admin /></RutasProtegidas>} />
-            <Route
-              path='/users'
-              element={
-                <RutasProtegidas isAuthenticated={isAuthenticated}>
-                  <UsersProvider>
-                    <Users cargando={cargando} />
-                  </UsersProvider>
-                </RutasProtegidas>
-              }
-            />
-            <Route path='/login' element={<IniciarSesion setIsAuthenticated={setIsAuthenticated} />} />
-            <Route path='/registrarse' element={<Registrarse />} />
-            <Route
-              path='/admin/productos'
-              element={
-                <RutasProtegidas isAuthenticated={isAuthenticated}>
-                  <AdminProductos  cargando={cargando} />
-                </RutasProtegidas>
-              }
-            />
-          </Routes>
-          {mensaje && (
-            <div className="mensaje-overlay">
-              <div className="mensaje-box">
-                {mensaje}
-              </div>
-            </div>
-          )}
+        <ProductProvider>
+          <CartProvider>
+            <AppRoutes />
+            <CartDebug />
+          </CartProvider>
+        </ProductProvider>
       </UserProvider>
     </Router>
+  )
+}
+
+function AppRoutes() {
+  const { mensaje, isAuthenticated } = useContext(CartContext);
+
+  return (
+    <>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/acercade' element={<AcercaDe />} />
+        <Route path='/productos' element={<GaleriaDeProductos />} />
+        <Route path='/productos/:id' element={<DetallesProductos />} />
+        <Route path='/contactos' element={<Contactos />} />
+        <Route path='*' element={<NotFound />} />
+        <Route path='/admin' element={
+          <RutasProtegidas isAuthenticated={isAuthenticated}>
+            <Admin />
+          </RutasProtegidas>
+        } />
+        <Route path='/users' element={
+          <RutasProtegidas isAuthenticated={isAuthenticated}>
+            <UsersProvider>
+              <Users />
+            </UsersProvider>
+          </RutasProtegidas>
+        } />
+        <Route path='/login' element={<IniciarSesion />} />
+        <Route path='/registrarse' element={<Registrarse />} />
+        <Route path='/admin/productos' element={
+          <RutasProtegidas isAuthenticated={isAuthenticated}>
+            <AdminProductos />
+          </RutasProtegidas>
+        } />
+      </Routes>
+      {mensaje && (
+        <div className="mensaje-overlay">
+          <div className="mensaje-box">
+            {mensaje}
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

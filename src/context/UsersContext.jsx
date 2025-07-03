@@ -42,8 +42,7 @@ export const UsersProvider = ({ children }) => {
                 }
             });
 
-            if (!response.ok) {
-                //redirigir al login
+            if (!response.ok) {                
                 const errorText = await response.text();            
                 if (response.status === 401 || response.status === 403) {
                     setError(`Error : ${errorText}`);

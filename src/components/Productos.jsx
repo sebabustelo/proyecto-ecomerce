@@ -2,17 +2,31 @@ import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import './styleProductos.css'
 import { CartContext } from '../context/CartContext'
+import { ProductContext } from '../context/ProductContext'
 
 const Producto = ({ producto, detalleProducto }) => {
-    const { nombre, precio, stock, imagen } = producto;
+    const { nombre, precio, imagen } = producto;
     const [cantidad, setCantidad] = useState(1);
     const { handleAddToCart } = useContext(CartContext);
+    const { actualizarStock, productoDisponible } = useContext(ProductContext);
+
+    // Obtener el stock actual del producto
+    const stockActual = producto.stock || 0;
 
     const aumentarCantidad = () => {
-        if (cantidad < stock) setCantidad(cantidad + 1);
+        if (cantidad < stockActual) setCantidad(cantidad + 1);
     };
+    
     const disminuirCantidad = () => {
         if (cantidad > 1) setCantidad(cantidad - 1);
+    };
+
+    const agregarAlCarrito = () => {
+        if (productoDisponible(producto.id, cantidad)) {
+            handleAddToCart({ ...producto, cantidad });
+            actualizarStock(producto.id, cantidad);
+            setCantidad(1);
+        }
     };
    
     return (
@@ -25,12 +39,12 @@ const Producto = ({ producto, detalleProducto }) => {
 
             <h3 className='nombre'>{nombre}</h3>
             <p className='precio'>${precio}</p>
-            <p className='stock'>Stock: {stock}</p>
+            <p className='stock'>Stock: {stockActual}</p>
 
             <div className='cantidadContainer'>
                 <button className='qtyButton' onClick={disminuirCantidad} disabled={cantidad <= 1}>-</button>
                 <span>{cantidad}</span>
-                <button className='qtyButton' onClick={aumentarCantidad} disabled={cantidad >= stock}>+</button>
+                <button className='qtyButton' onClick={aumentarCantidad} disabled={cantidad >= stockActual}>+</button>
             </div>
 
             <div className="botones-producto">
@@ -45,8 +59,8 @@ const Producto = ({ producto, detalleProducto }) => {
                 )}
                 <button
                     className="button-producto"
-                    onClick={() => handleAddToCart({ ...producto, cantidad })}
-                    disabled={stock === 0}
+                    onClick={agregarAlCarrito}
+                    disabled={stockActual === 0}
                     title="Agregar al carrito"
                 >
                     <i className="fa-solid fa-cart-plus"></i>

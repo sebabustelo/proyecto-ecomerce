@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import './styleLogin.css'
 import { auth, googleProvider, facebookProvider } from "../firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { API_BASE_URL } from "../utils/apiConfig";
+import { signInWithPopup } from "firebase/auth";
 
 const Login = ({ setIsAuthenticated }) => {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -22,7 +21,8 @@ const Login = ({ setIsAuthenticated }) => {
             return;
         }
         try {
-            const response = await fetch(`${API_BASE_URL}/login`, {
+            console.log('Attempting login with:', form.email); // Debug log
+            const response = await fetch("http://localhost:8229/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -33,23 +33,31 @@ const Login = ({ setIsAuthenticated }) => {
                 })
             });
 
+            console.log('Login response status:', response.status); // Debug log
+
             if (!response.ok) {
                 const data = await response.json();
+                console.error('Login error:', data); // Debug log
                 setError(data.message || "Credenciales incorrectas.");
                 return;
             }
 
             const data = await response.json();
-
+            console.log('Login successful, token received'); // Debug log
+            
             // Store the token
             if (data.token) {
                 localStorage.setItem("token", data.token);
+                console.log('Token stored in localStorage'); // Debug log
                 setIsAuthenticated(true);
+                
                 navigate("/admin");
             } else {
+                console.error('No token in response:', data); // Debug log
                 setError("Error: No se recibió el token de autenticación.");
             }
-        } catch (error) {
+        } catch (err) {
+            console.error('Login error:', err); // Debug log
             setError("Error de conexión con el servidor.");
         }
     };
@@ -57,35 +65,16 @@ const Login = ({ setIsAuthenticated }) => {
     const handleGoogleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const googleIdToken = credential.idToken;
-            if (googleIdToken) {
-                const response = await fetch(`${API_BASE_URL}/google-login`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ id_token: googleIdToken })
-                });
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || "Error al iniciar sesión con Google.");
-                }
-                const data = await response.json();
-                localStorage.setItem("token", data.token);
-                if (!data.token) {
-                    throw new Error("No se recibió el token de autenticación de Google.");
-                }
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                console.log("Token de Google:", data.token);
-                setIsAuthenticated(true);
-                navigate("/admin");
-            } else {
-                throw new Error("No se pudo obtener el ID token de Google.");
+            console.log('Google login successful:', result); // Debug log
+            // Store the token from Google auth
+            if (result.user.accessToken) {
+                localStorage.setItem("token", result.user.accessToken);
+                console.log('Google token stored in localStorage'); // Debug log
             }
+            setIsAuthenticated(true);
+            navigate("/admin");
         } catch (error) {
+            console.error('Google login error:', error); // Debug log
             alert("Error con Google: " + error.message);
         }
     };
@@ -93,13 +82,16 @@ const Login = ({ setIsAuthenticated }) => {
     const handleFacebookLogin = async () => {
         try {
             const result = await signInWithPopup(auth, facebookProvider);
+            console.log('Facebook login successful:', result); // Debug log
             // Store the token from Facebook auth
             if (result.user.accessToken) {
                 localStorage.setItem("token", result.user.accessToken);
+                console.log('Facebook token stored in localStorage'); // Debug log
             }
             setIsAuthenticated(true);
             navigate("/admin");
         } catch (error) {
+            console.error('Facebook login error:', error); // Debug log
             alert("Error con Facebook: " + error.message);
         }
     };
@@ -134,11 +126,11 @@ const Login = ({ setIsAuthenticated }) => {
                 <button type="submit" className="login-btn">Ingresar</button>
                 <button onClick={handleGoogleLogin} className="login-btn google" type="button">
                     <i className="fa-brands fa-google"></i>
-                    Google
+                    Ingresar con Google
                 </button>
                 <button onClick={handleFacebookLogin} className="login-btn facebook" type="button">
                     <i className="fa-brands fa-facebook-f"></i>
-                    Facebook
+                    Ingresar con Facebook
                 </button>
                 <p className="register-link">
                     ¿No tienes una cuenta? <Link to="/registrarse">Regístrate</Link>

@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../components/estaticos/Header";
+//import Header from "../components/estaticos/Header";
 import Footer from "../components/estaticos/Footer";
 import "./../admin.css"; // crea este archivo o agrega los estilos a tu CSS global
 import HeaderAdmin from "../components/estaticos/HeaderAdmin";
