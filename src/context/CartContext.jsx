@@ -63,13 +63,15 @@ export const CartProvider = ({ children }) => {
             setCart(cart.filter(item => item.id !== producto.id));
             setMensaje(`"${producto.nombre}" eliminado del carrito`);
         }
-        setTimeout(() => setMensaje(''), 1000);
+        setTimeout(() => setMensaje(''), 500);
     };
 
     const handleDeleteCart = () => {
         setCart([]);
+        // Limpiar también el localStorage directamente
+        localStorage.removeItem('cart');
         setMensaje("Carrito vaciado");
-        setTimeout(() => setMensaje(''), 1000);
+        setTimeout(() => setMensaje(''), 500);
     };
 
     // Calcular total del carrito

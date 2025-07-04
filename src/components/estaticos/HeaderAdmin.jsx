@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styleEstatico.css';
 import Cart from '../Cart';
 import { useAuth } from '../../context/AuthContext';
+import { CartContext } from '../../context/CartContext';
 
 
 
@@ -10,6 +11,7 @@ const Header = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
+    const { handleDeleteCart } = useContext(CartContext);
     const navigate = useNavigate();
 
     const handleToggle = () => setOpen(!open);
@@ -41,7 +43,11 @@ const Header = () => {
                     </li>
                     {user && (
                         <li className="nav-item">
-                            <Link to="/" className="nav-link" onClick={() => { logout(); navigate('/'); }}>
+                            <Link to="/" className="nav-link" onClick={() => { 
+                                handleDeleteCart(); 
+                                logout(); 
+                                navigate('/'); 
+                            }}>
                                 <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
                             </Link>
                         </li>

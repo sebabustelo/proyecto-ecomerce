@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { CartContext } from '../context/CartContext';
 import './UserProfile.css';
 
 const UserProfile = () => {
     const { user, logout } = useAuth();
+    const { handleDeleteCart } = useContext(CartContext);
 
     const handleLogout = async () => {
         try {
+            // Vaciar el carrito antes de cerrar sesión
+            handleDeleteCart();
             await logout();
         } catch (error) {
             console.error('Logout error:', error);
