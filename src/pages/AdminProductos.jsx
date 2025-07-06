@@ -26,19 +26,15 @@ const AdminProductos = () => {
     useEffect(() => {
         const fetchProductos = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_BASE_URL}/products`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    }
-                });
-                if (!response.ok) throw new Error('Error al obtener productos');
+                const response = await fetch(`${API_BASE_URL}/products`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
                 const data = await response.json();
-                const productosData = data.data || data;
-                setProductos(productosData);
-                setFilteredProductos(productosData);
+                setProductos(data);
+                setFilteredProductos(data);
             } catch (err) {
+                console.error('Error al obtener productos:', err);
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -52,10 +48,10 @@ const AdminProductos = () => {
         const filtered = productos.filter(producto => {
             const searchTermLower = searchTerm.toLowerCase();
             return (
-                (producto.name || producto.Name || '').toLowerCase().includes(searchTermLower) ||
-                (producto.description || producto.Description || '').toLowerCase().includes(searchTermLower) ||
-                (producto.price || producto.Price || '').toString().includes(searchTermLower) ||
-                (producto.stock || producto.Stock || '').toString().includes(searchTermLower)
+                (producto.nombre || '').toLowerCase().includes(searchTermLower) ||
+                (producto.descripcion || '').toLowerCase().includes(searchTermLower) ||
+                (producto.precio || '').toString().includes(searchTermLower) ||
+                (producto.stock || '').toString().includes(searchTermLower)
             );
         });
         setFilteredProductos(filtered);
@@ -128,13 +124,13 @@ const AdminProductos = () => {
                             <tbody>
                                 {Array.isArray(filteredProductos) && filteredProductos.length > 0 ? (
                                     filteredProductos.map((producto) => (
-                                        <tr key={producto.id || producto.ID}>
-                                            <td>{producto.name || producto.Name}</td>
-                                            <td className="description-cell" title={producto.description || producto.Description}>
-                                                {truncateText(producto.description || producto.Description)}
+                                        <tr key={producto.id}>
+                                            <td>{producto.nombre}</td>
+                                            <td className="description-cell" title={producto.descripcion}>
+                                                {truncateText(producto.descripcion)}
                                             </td>
-                                            <td>${producto.price || producto.Price}</td>
-                                            <td>{producto.stock || producto.Stock}</td>
+                                            <td>${producto.precio}</td>
+                                            <td>{producto.stock}</td>
                                             <td>
                                                 <div className="action-buttons">
                                                     <button
@@ -142,12 +138,12 @@ const AdminProductos = () => {
                                                         onClick={() => {
                                                             setSelectedProduct(producto);
                                                             setProductData({
-                                                                name: producto.name || producto.Name || '',
-                                                                description: producto.description || producto.Description || '',
-                                                                price: producto.price || producto.Price || '',
-                                                                stock: producto.stock || producto.Stock || '',
-                                                                category_id: producto.category_id || producto.CategoryID || '',
-                                                                image: producto.image || producto.Image || ''
+                                                                name: producto.nombre || '',
+                                                                description: producto.descripcion || '',
+                                                                price: producto.precio || '',
+                                                                stock: producto.stock || '',
+                                                                category_id: producto.categoria || '',
+                                                                image: producto.imagen || ''
                                                             });
                                                             setIsEditing(true);
                                                             setShowModal(true);
@@ -157,7 +153,7 @@ const AdminProductos = () => {
                                                     </button>
                                                     <button
                                                         className="action-button delete-button icon-button"
-                                                        onClick={() => handleDelete(producto.id || producto.ID)}
+                                                        onClick={() => handleDelete(producto.id)}
                                                     >
                                                         <i className="fa-solid fa-trash"></i>
                                                     </button>
