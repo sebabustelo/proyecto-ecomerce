@@ -21,9 +21,74 @@ export const AuthProvider = ({ children }) => {
 
     // Escuchar cambios en el estado de autenticación
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            console.log('onAuthStateChanged triggered:', firebaseUser);
+            console.log('Firebase auth current user:', auth.currentUser);
+            
             if (firebaseUser) {
-                setUser(firebaseUser);
+                console.log('Firebase user detected:', firebaseUser.email);
+                
+                // Verificar si es un login reciente usando una bandera en sessionStorage
+                const loginFlag = sessionStorage.getItem('recentLogin');
+                const isRecentLogin = loginFlag === 'true';
+                
+                if (isRecentLogin) {
+                    console.log('Recent login detected, calling API...');
+                    
+                    try {
+                        // Obtener el token del proveedor
+                        const providerToken = await firebaseUser.getIdToken();
+                        console.log('Provider token obtained:', providerToken.substring(0, 50) + '...');
+                        
+                        // Determinar el endpoint según el proveedor
+                        const provider = firebaseUser.providerData[0]?.providerId;
+                        const endpoint = provider === 'google.com' ? 'google-login' : 'facebook-login';
+                        console.log('Using endpoint:', endpoint);
+                        
+                        // Llamar a la API con el token del proveedor
+                        console.log('Calling API with token...');
+                        const apiResponse = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                id_token: providerToken
+                            })
+                        });
+
+                        console.log('API response status:', apiResponse.status);
+
+                        if (!apiResponse.ok) {
+                            const errorData = await apiResponse.json();
+                            console.error('API error:', errorData);
+                            setError(errorData.message || `Error en el login con ${provider === 'google.com' ? 'Google' : 'Facebook'}`);
+                            return;
+                        }
+
+                        const apiData = await apiResponse.json();
+                        console.log('API response data:', apiData);
+                        
+                        if (apiData.Token) {
+                            localStorage.setItem("token", apiData.Token);
+                            setUser(apiData);
+                            console.log('Login successful, user set:', apiData);
+                            // Limpiar la bandera de login reciente
+                            sessionStorage.removeItem('recentLogin');
+                        } else {
+                            setError("Error: No se recibió el token de autenticación del servidor.");
+                            sessionStorage.removeItem('recentLogin');
+                        }
+                    } catch (error) {
+                        console.error('Error calling API:', error);
+                        setError("Error al procesar el login con el proveedor.");
+                        sessionStorage.removeItem('recentLogin');
+                    }
+                } else {
+                    console.log('Existing user, not calling API');
+                    setUser(firebaseUser);
+                }
             } else if (localStorage.getItem("token")) {
                 try {
                     const token = localStorage.getItem("token");
@@ -42,22 +107,23 @@ export const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
-    // Manejar resultado de redirect
+    // Manejar resultado de redirect (mantener por compatibilidad)
     useEffect(() => {
-        const handleRedirectResult = async () => {
+        
+        
+        const checkRedirectResult = async () => {
             try {
+                if (!auth) return;
                 const result = await getRedirectResult(auth);
                 if (result) {
-                    console.log('Redirect login successful:', result.user);
+                    console.log('Redirect result found, but using onAuthStateChanged instead');
                 }
             } catch (error) {
-                console.error('Redirect login error:', error);
-                const errorMessage = getErrorMessage(error.code);
-                setError(errorMessage);
+                console.error('Redirect result error:', error);
             }
         };
 
-        handleRedirectResult();
+        checkRedirectResult();
     }, []);
 
     // Login con email y contraseña
@@ -121,8 +187,16 @@ export const AuthProvider = ({ children }) => {
     const loginWithGoogle = async () => {
         try {
             setError(null);
+            console.log('Iniciando login con Google...');
+            console.log('Auth domain:', auth.config.authDomain);
+            console.log('Current URL:', window.location.href);
+            
+            // Establecer bandera de login reciente
+            sessionStorage.setItem('recentLogin', 'true');
+            // Iniciar el proceso de login con Google
             await signInWithRedirect(auth, googleProvider);
         } catch (error) {
+            console.error('Error en loginWithGoogle:', error);
             const errorMessage = getErrorMessage(error.code);
             setError(errorMessage);
             throw error;
@@ -133,6 +207,9 @@ export const AuthProvider = ({ children }) => {
     const loginWithFacebook = async () => {
         try {
             setError(null);
+            // Establecer bandera de login reciente
+            sessionStorage.setItem('recentLogin', 'true');
+            // Iniciar el proceso de login con Facebook
             await signInWithRedirect(auth, facebookProvider);
         } catch (error) {
             const errorMessage = getErrorMessage(error.code);
@@ -192,6 +269,8 @@ export const AuthProvider = ({ children }) => {
                 return 'Ya existe una cuenta con este email usando otro método de autenticación.';
             case 'auth/operation-not-allowed':
                 return 'Este método de autenticación no está habilitado.';
+            case 'auth/unauthorized-domain':
+                return 'Este dominio no está autorizado. Contacta al administrador.';
             default:
                 return 'Ocurrió un error inesperado.';
         }

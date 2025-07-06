@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 export const ProductContext = createContext();
 
@@ -10,9 +11,11 @@ export const ProductProvider = ({ children }) => {
     const [categoriaFiltro, setCategoriaFiltro] = useState('');
 
     useEffect(() => {
-        fetch('/data/data.json')
+        fetch(`${API_BASE_URL}/products`)
             .then(res => {
-                if (!res.ok) throw new Error('Error en la respuesta del servidor');
+                if (!res.ok) {
+                    throw new Error(`Error ${res.status}: ${res.statusText}`);
+                }
                 return res.json();
             })
             .then(datos => {
