@@ -48,8 +48,7 @@ const Header = () => {
                         <li className="nav-item">
                             <a
                                 href="/admin"
-                                className="nav-link"
-                                target="_blank"
+                                className="nav-link"                            
                                 rel="noopener noreferrer"
                             >
                                 <i className="fa-solid fa-gears"></i> Panel Admin

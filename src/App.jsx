@@ -11,6 +11,8 @@ import IniciarSesion from './pages/IniciarSesion'
 import Admin from './pages/Admin'
 import Users from './pages/Users'
 import AdminProductos from './pages/AdminProductos'
+import AdminApis from './pages/AdminApis'
+import AdminRoles from './pages/AdminRoles'
 import RutasProtegidas from './auth/RutasProtegidas'
 import { CartContext } from './context/CartContext'
 import { ProductProvider } from './context/ProductContext'
@@ -66,12 +68,12 @@ function AppRoutes() {
         <Route path='/contactos' element={<Contactos />} />
         <Route path='*' element={<NotFound />} />
         <Route path='/admin' element={
-          <RutasProtegidas isAuthenticated={!!user}>
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
             <Admin />
           </RutasProtegidas>
         } />
         <Route path='/users' element={
-          <RutasProtegidas isAuthenticated={!!user}>
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
             <UsersProvider>
               <Users />
             </UsersProvider>
@@ -81,8 +83,18 @@ function AppRoutes() {
         <Route path='/registrarse' element={<Registrarse />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/admin/productos' element={
-          <RutasProtegidas isAuthenticated={!!user}>
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
             <AdminProductos />
+          </RutasProtegidas>
+        } />
+        <Route path='/admin/apis' element={
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
+            <AdminApis />
+          </RutasProtegidas>
+        } />
+        <Route path='/admin/roles' element={
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
+            <AdminRoles />
           </RutasProtegidas>
         } />
       </Routes>

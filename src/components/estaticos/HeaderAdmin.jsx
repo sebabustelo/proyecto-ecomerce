@@ -5,8 +5,6 @@ import Cart from '../Cart';
 import { useAuth } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 
-
-
 const Header = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
@@ -30,17 +28,26 @@ const Header = () => {
                 </div>
                 <ul className={`nav-list ${open ? 'open' : ''}`}>
                     <li className="nav-item">
-                        <Link to="/" className='nav-link' onClick={handleClose}>Home</Link>
+                        <Link to="/" className='nav-link' onClick={handleClose}>
+                            <i className="fa-solid fa-store"></i> Home
+                        </Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/users" className='nav-link' onClick={handleClose}>Usuarios</Link>
+                        <Link to="/admin" className='nav-link' onClick={handleClose}>
+                            <i className="fa-solid fa-dashboard"></i> Admin
+                        </Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/admin/productos" className='nav-link' onClick={handleClose}>Productos</Link>
+                        <Link to="/users" className='nav-link' onClick={handleClose}>
+                            <i className="fa-solid fa-users"></i> Usuarios
+                        </Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/pedidos" className='nav-link' onClick={handleClose}>Pedidos</Link>
+                        <Link to="/admin/productos" className='nav-link' onClick={handleClose}>
+                            <i className="fa-solid fa-box"></i> Productos
+                        </Link>
                     </li>
+                   
                     {user && (
                         <li className="nav-item">
                             <Link to="/" className="nav-link" onClick={() => { 
@@ -53,16 +60,7 @@ const Header = () => {
                         </li>
                     )}
                 </ul>
-                {/* Carrito fuera del menú hamburguesa */}
-                <div className="cart-icon-container nav-item">
-                    <button className='nav-link' onClick={() => setCartOpen(true)} >
-                        <i className="fa-solid fa-cart-shopping"></i>
-                    </button>
-                    <Cart                        
-                        isOpen={isCartOpen}
-                        onClose={() => setCartOpen(false)}                                               
-                    />
-                </div>
+               
             </nav>
         </header>
     );
