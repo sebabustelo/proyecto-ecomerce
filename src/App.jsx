@@ -13,14 +13,15 @@ import Users from './pages/Users'
 import AdminProductos from './pages/AdminProductos'
 import AdminApis from './pages/AdminApis'
 import AdminRoles from './pages/AdminRoles'
+import Checkout from './pages/Checkout'
 import RutasProtegidas from './auth/RutasProtegidas'
-import { CartContext } from './context/CartContext'
 import { ProductProvider } from './context/ProductContext'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { UserProvider } from './context/UserContext'
 import { UsersProvider } from './context/UsersContext'
 import ResetPassword from './components/ResetPassword'
+import AdminPedidos from './pages/AdminPedidos'
 import './index.css'
 
 function App() {
@@ -40,7 +41,6 @@ function App() {
 }
 
 function AppRoutes() {
-  const { mensaje } = useContext(CartContext);
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -65,6 +65,7 @@ function AppRoutes() {
         <Route path='/acercade' element={<AcercaDe />} />
         <Route path='/productos' element={<GaleriaDeProductos />} />
         <Route path='/productos/:id' element={<DetallesProductos />} />
+        <Route path='/checkout' element={<Checkout />} />
         <Route path='/contactos' element={<Contactos />} />
         <Route path='*' element={<NotFound />} />
         <Route path='/admin' element={
@@ -97,14 +98,12 @@ function AppRoutes() {
             <AdminRoles />
           </RutasProtegidas>
         } />
+        <Route path='/admin/pedidos' element={
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
+            <AdminPedidos />
+          </RutasProtegidas>
+        } />
       </Routes>
-      {mensaje && (
-        <div className="mensaje-overlay">
-          <div className="mensaje-box">
-            {mensaje}
-          </div>
-        </div>
-      )}
     </>
   )
 }

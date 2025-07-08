@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Footer from "../components/estaticos/Footer";
 import "./../admin.css"; // crea este archivo o agrega los estilos a tu CSS global
 import HeaderAdmin from "../components/estaticos/HeaderAdmin";
+import AdminPedidos from "../pages/AdminPedidos";
 
 const Admin = () => {
   const [openGroup, setOpenGroup] = useState({ operativa: true, negocio: false });

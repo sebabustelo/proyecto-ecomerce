@@ -1,98 +1,167 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
-export const CartContext = createContext();
+const CartContext = createContext();
+
+const cartReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_TO_CART':
+      const existingItem = state.items.find(item => item.id === action.payload.id);
+      if (existingItem) {
+        return {
+          ...state,
+          items: state.items.map(item =>
+            item.id === action.payload.id
+              ? { ...item, quantity: item.quantity + (action.payload.quantity || 1) }
+              : item
+          )
+        };
+      } else {
+        return {
+          ...state,
+          items: [...state.items, { ...action.payload, quantity: action.payload.quantity || 1 }]
+        };
+      }
+    case 'REMOVE_FROM_CART':
+      return {
+        ...state,
+        items: state.items.filter(item => item.id !== action.payload)
+      };
+    case 'UPDATE_QUANTITY':
+      return {
+        ...state,
+        items: state.items.map(item =>
+          item.id === action.payload.id
+            ? { ...item, quantity: action.payload.quantity }
+            : item
+        )
+      };
+    case 'CLEAR_CART':
+      return {
+        ...state,
+        items: []
+      };
+    case 'LOAD_CART':
+      return {
+        ...state,
+        items: action.payload
+      };
+    default:
+      return state;
+  }
+};
+
+// Función para obtener el estado inicial desde localStorage
+const getInitialState = () => {
+  try {
+    const savedCart = localStorage.getItem('cart');
+    console.log('Loading cart from localStorage:', savedCart);
+    if (savedCart) {
+      const parsedCart = JSON.parse(savedCart);
+      console.log('Parsed cart:', parsedCart);
+      return { items: parsedCart };
+    }
+  } catch (error) {
+    console.error('Error loading cart from localStorage:', error);
+  }
+  console.log('No saved cart found, starting with empty cart');
+  return { items: [] };
+};
 
 export const CartProvider = ({ children }) => {
-    const [cart, setCart] = useState([]);
-    const [mensaje, setMensaje] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isInitialized, setIsInitialized] = useState(false);
+  const [state, dispatch] = useReducer(cartReducer, getInitialState());
 
-    // Cargar carrito desde localStorage solo una vez al inicializar
-    useEffect(() => {
-        try {
-            const savedCart = localStorage.getItem('cart');
-            if (savedCart) {
-                const parsedCart = JSON.parse(savedCart);
-                setCart(parsedCart);
-            }
-        } catch (error) {
-            console.error('Error al cargar el carrito desde localStorage:', error);
-            localStorage.removeItem('cart'); // Limpiar datos corruptos
-        }
-        setIsInitialized(true);
-    }, []);
+  // Guardar en localStorage cada vez que cambie el estado
+  useEffect(() => {
+    console.log('Saving cart to localStorage:', state.items);
+    localStorage.setItem('cart', JSON.stringify(state.items));
+  }, [state.items]);
 
-    // Guardar carrito en localStorage solo después de la inicialización
-    useEffect(() => {
-        if (isInitialized) {
-            try {
-                localStorage.setItem('cart', JSON.stringify(cart));
-            } catch (error) {
-                console.error('Error al guardar el carrito en localStorage:', error);
-            }
-        }
-    }, [cart, isInitialized]);
+  const addToCart = (product, quantity = 1) => {
+    console.log('Adding to cart:', product, 'quantity:', quantity);
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: { ...product, quantity }
+    });
+  };
 
-    const handleAddToCart = (producto) => {
-        const productoExistente = cart.find(item => item.id === producto.id);
+  const removeFromCart = (productId) => {
+    console.log('Removing from cart:', productId);
+    dispatch({
+      type: 'REMOVE_FROM_CART',
+      payload: productId
+    });
+  };
 
-        if (productoExistente) {
-            setCart(cart.map(item =>
-                item.id === producto.id
-                    ? { ...item, cantidad: item.cantidad + producto.cantidad }
-                    : item
-            ));
-        } else {
-            setCart([...cart, { ...producto }]);
-        }
-        
-        setMensaje(`"${producto.nombre}" agregado al carrito`);
-        setTimeout(() => setMensaje(''), 1000);
+  const updateQuantity = (productId, newQuantity) => {
+    console.log('Updating quantity for product:', productId, 'new quantity:', newQuantity);
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+    } else {
+      dispatch({
+        type: 'UPDATE_QUANTITY',
+        payload: { id: productId, quantity: newQuantity }
+      });
+    }
+  };
+
+  const clearCart = () => {
+    console.log('Clearing cart');
+    dispatch({
+      type: 'CLEAR_CART'
+    });
+  };
+
+  const getTotalItems = () => {
+    return state.items.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const getTotalPrice = () => {
+    return state.items.reduce((total, item) => total + (item.precio || item.price) * item.quantity, 0);
+  };
+
+  const getCartItems = () => {
+    return state.items;
+  };
+
+  const createOrder = () => {
+    const order = {
+      items: state.items.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        price: item.precio || item.price,
+        name: item.nombre || item.name,
+        image: item.imagen || item.image
+      })),
+      total: getTotalPrice(),
+      total_items: getTotalItems()
     };
 
-    const handleDeleteItem = (producto) => {
-        if (producto.cantidad > 1) {
-            setCart(cart.map(item =>
-                item.id === producto.id
-                    ? { ...item, cantidad: item.cantidad - 1 }
-                    : item
-            ));
-            setMensaje(`Se redujo la cantidad de "${producto.nombre}" en 1`);
-        } else {
-            setCart(cart.filter(item => item.id !== producto.id));
-            setMensaje(`"${producto.nombre}" eliminado del carrito`);
-        }
-        setTimeout(() => setMensaje(''), 500);
-    };
+    return order;
+  };
 
-    const handleDeleteCart = () => {
-        setCart([]);
-        // Limpiar también el localStorage directamente
-        localStorage.removeItem('cart');
-        setMensaje("Carrito vaciado");
-        setTimeout(() => setMensaje(''), 500);
-    };
+  const value = {
+    items: state.items,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    getTotalItems,
+    getTotalPrice,
+    getCartItems,
+    createOrder
+  };
 
-    // Calcular total del carrito
-    const totalCarrito = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  return (
+    <CartContext.Provider value={value}>
+      {children}
+    </CartContext.Provider>
+  );
+};
 
-    // Calcular cantidad total de items
-    const cantidadItems = cart.reduce((acc, item) => acc + item.cantidad, 0);
-
-    return (
-        <CartContext.Provider value={{
-            cart,
-            mensaje,
-            isAuthenticated,
-            setIsAuthenticated,
-            handleAddToCart,
-            handleDeleteItem,
-            handleDeleteCart,
-            totalCarrito,
-            cantidadItems
-        }}>
-            {children}
-        </CartContext.Provider>
-    );
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
 };

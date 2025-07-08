@@ -1,106 +1,143 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 import './styleCart.css';
-import { CartContext } from '../context/CartContext';
-import { ProductContext } from '../context/ProductContext';
 
 const Cart = ({ isOpen, onClose }) => {
-    const { 
-        cart, 
-        handleDeleteItem, 
-        handleDeleteCart, 
-        totalCarrito, 
-        cantidadItems 
-    } = useContext(CartContext);
-    
-    const { restaurarStock } = useContext(ProductContext);
+  const { 
+    items, 
+    removeFromCart, 
+    updateQuantity, 
+    getTotalPrice, 
+    getTotalItems 
+  } = useCart();
+  const navigate = useNavigate();
 
-    const handleMercadoPago = () => {
-        alert("Redirigiendo a Mercado Pago...");
-        // window.location.href = "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TU_PREFERENCE_ID";
-    };
+  console.log('Cart component render - isOpen:', isOpen, 'items:', items);
 
-    const handleDeleteItemFromCart = (producto) => {
-        // Restaurar stock antes de eliminar del carrito
-        if (producto.cantidad > 1) {
-            restaurarStock(producto.id, 1);
-        } else {
-            restaurarStock(producto.id, producto.cantidad);
-        }
-        handleDeleteItem(producto);
-    };
+  if (!isOpen) {
+    console.log('Cart not open, returning null');
+    return null;
+  }
 
-    const handleVaciarCarrito = () => {
-        // Restaurar stock de todos los productos
-        cart.forEach(item => {
-            restaurarStock(item.id, item.cantidad);
-        });
-        handleDeleteCart();
-    };
-
+  if (items.length === 0) {
     return (
-        <div className={`cart-drawer ${isOpen ? 'open' : ''}`}>
-            <div className="cart-header">
-                <h3>Carrito de Compras</h3>
-                <button onClick={onClose} className='close-button'>X</button>
-            </div>
-            <div className="cart-content">
-                {cart.length === 0 ? (
-                    <div className="empty-cart">
-                        🛒 Tu carrito está vacío.<br />
-                        Agregá productos para comenzar tu pedido.
-                    </div>
-                ) : (
-                    <>
-                        <ul className="cart-items">
-                            {cart.map((item, index) => (
-                                <li key={index}>
-                                    <img src={item.imagen} alt={item.nombre} />
-                                    <h3>{item.nombre} <br /> {item.cantidad} * ${item.precio} = ${item.precio * item.cantidad}</h3>
-                                    <button
-                                        className="deleteButton"
-                                        onClick={() => handleDeleteItemFromCart(item)}
-                                        title="Eliminar producto"
-                                    >
-                                        <i className="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="cart-summary">
-                            <div className="cart-items-count">
-                                <i className="fa-solid fa-shopping-cart"></i>
-                                {cantidadItems} {cantidadItems === 1 ? 'producto' : 'productos'}
-                            </div>
-                            <div className="cart-total">
-                                <strong>
-                                    <i className="fa-solid fa-money-bill-wave" style={{ marginRight: "0.5em", color: "#1A5632" }}></i>
-                                    Total: ${totalCarrito}
-                                </strong>
-                            </div>
-                        </div>
-                        <div className="cart-actions-row">
-                            <button
-                                className="vaciar-carrito-btn"
-                                onClick={handleVaciarCarrito}
-                                title="Vaciar carrito"
-                            >
-                                <i className="fa-solid fa-trash-can" style={{ marginRight: "0.5em" }}></i>
-                                Vaciar
-                            </button>
-                            <button
-                                className="mercado-pago-btn"
-                                onClick={handleMercadoPago}
-                                title="Comprar"
-                            >
-                                <i className="fa-brands fa-cc-mastercard" style={{ marginRight: "0.5em" }}></i>
-                                Comprar
-                            </button>
-                        </div>
-                    </>
-                )}
-            </div>
+      <div className="cart-drawer open">
+        <div className="cart-header">
+          <h3>Carrito de Compras</h3>
+          <button onClick={onClose} className='close-button'>×</button>
         </div>
+        <div className="cart-content">
+          <div className="cart-empty">
+            <div className="empty-icon">
+              <i className="fa-solid fa-shopping-cart"></i>
+            </div>
+            <h2>Tu carrito está vacío</h2>
+            <p>Agrega algunos productos para comenzar a comprar</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => {
+                onClose();
+                navigate('/productos');
+              }}
+            >
+              Ver productos
+            </button>
+          </div>
+        </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="cart-drawer open">
+      <div className="cart-header">
+        <h3>Carrito de Compras</h3>
+        <button onClick={onClose} className='close-button'>×</button>
+      </div>
+      <div className="cart-content">
+        <div className="cart-items">
+          {items.map((item) => (
+            <div key={item.id} className="cart-item">
+              <div className="item-image">
+                <img 
+                  src={item.imagen || item.image} 
+                  alt={item.nombre || item.name}
+                />
+              </div>
+              <div className="item-details">
+                <h4>{item.nombre || item.name}</h4>
+                <p className="item-price">
+                  ${(item.precio || item.price).toLocaleString()} x {item.quantity}
+                </p>
+              </div>
+              <div className="item-quantity">
+                <button 
+                  className="quantity-btn"
+                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  disabled={item.quantity <= 1}
+                >
+                  -
+                </button>
+                <span className="quantity">{item.quantity}</span>
+                <button 
+                  className="quantity-btn"
+                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                >
+                  +
+                </button>
+              </div>
+              <div className="item-total">
+                ${((item.precio || item.price) * item.quantity).toLocaleString()}
+              </div>
+              <button 
+                className="remove-btn"
+                onClick={() => removeFromCart(item.id)}
+              >
+                <i className="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="cart-summary">
+          <h3>Resumen del pedido</h3>
+          <div className="summary-row">
+            <span>Productos ({getTotalItems()}):</span>
+            <span>${getTotalPrice().toLocaleString()}</span>
+          </div>
+          <div className="summary-row">
+            <span>Envío:</span>
+            <span>Gratis</span>
+          </div>
+          <div className="summary-row total">
+            <span>Total:</span>
+            <span>${getTotalPrice().toLocaleString()}</span>
+          </div>
+          <button 
+            className="btn btn-checkout"
+            onClick={() => {
+              onClose();
+              navigate('/checkout');
+            }}
+          >
+            <i className="fa-solid fa-credit-card" style={{ marginRight: 8 }}></i>
+            Finalizar Compra
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => {
+              onClose();
+              navigate('/productos');
+            }}
+          >
+            <i className="fa-solid fa-arrow-left" style={{ marginRight: 8 }}></i>
+            Continuar Comprando
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Cart;

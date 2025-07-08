@@ -390,11 +390,15 @@ const AdminProductos = () => {
                                             <div className="form-group">
                                                 <label htmlFor="price">Precio</label>
                                                 <input
-                                                    type="number"
+                                                    type="text"
                                                     id="price"
                                                     className="form-control"
-                                                    value={productData.price}
-                                                    onChange={(e) => setProductData({ ...productData, price: e.target.value })}
+                                                    value={productData.price ? `$${parseInt(productData.price).toLocaleString()}` : ''}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                                        setProductData({ ...productData, price: value });
+                                                    }}
+                                                    placeholder="$0"
                                                 />
                                             </div>
                                             <div className="form-group">

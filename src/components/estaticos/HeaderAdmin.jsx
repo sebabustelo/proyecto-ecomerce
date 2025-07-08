@@ -1,15 +1,15 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styleEstatico.css';
 import Cart from '../Cart';
 import { useAuth } from '../../context/AuthContext';
-import { CartContext } from '../../context/CartContext';
+import { useCart } from '../../context/CartContext';
 
 const Header = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
-    const { handleDeleteCart } = useContext(CartContext);
+    const { clearCart } = useCart();
     const navigate = useNavigate();
 
     const handleToggle = () => setOpen(!open);
@@ -51,7 +51,7 @@ const Header = () => {
                     {user && (
                         <li className="nav-item">
                             <Link to="/" className="nav-link" onClick={() => { 
-                                handleDeleteCart(); 
+                                clearCart(); 
                                 logout(); 
                                 navigate('/'); 
                             }}>

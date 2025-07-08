@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import './styleProductos.css'
-import { CartContext } from '../context/CartContext'
+import { useCart } from '../context/CartContext'
 import { ProductContext } from '../context/ProductContext'
 
 const Producto = ({ producto, detalleProducto }) => {
     const { nombre, precio, imagen } = producto;
     const [cantidad, setCantidad] = useState(1);
-    const { handleAddToCart } = useContext(CartContext);
+    const { addToCart } = useCart();
     const { actualizarStock, productoDisponible } = useContext(ProductContext);
 
     // Obtener el stock actual del producto
@@ -23,7 +23,7 @@ const Producto = ({ producto, detalleProducto }) => {
 
     const agregarAlCarrito = () => {
         if (productoDisponible(producto.id, cantidad)) {
-            handleAddToCart({ ...producto, cantidad });
+            addToCart(producto, cantidad);
             actualizarStock(producto.id, cantidad);
             setCantidad(1);
         }
