@@ -1,16 +1,16 @@
 /* Cart Drawer Styles */
 .cart-drawer {
   position: fixed !important;
-  /*top: 0 !important;*/
+  top: 72px !important;
   right: -400px !important;
   /*width: 400px !important;*/
-  height: 100vh !important;
+  height: 400vh !important;
   background: white !important;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1) !important;
   z-index: 1000 !important;
   transition: right 0.3s ease !important;
-  display: flex !important;
-  flex-direction: column !important;
+  
+  
 }
 
 .cart-drawer.open {
@@ -51,7 +51,7 @@
 
 .cart-content {
   flex: 1;
-  display: flex;
+ 
   flex-direction: column;
   overflow: hidden;
 }

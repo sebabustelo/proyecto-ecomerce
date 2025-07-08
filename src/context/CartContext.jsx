@@ -53,11 +53,9 @@ const cartReducer = (state, action) => {
 // Función para obtener el estado inicial desde localStorage
 const getInitialState = () => {
   try {
-    const savedCart = localStorage.getItem('cart');
-    console.log('Loading cart from localStorage:', savedCart);
+    const savedCart = localStorage.getItem('cart');    
     if (savedCart) {
-      const parsedCart = JSON.parse(savedCart);
-      console.log('Parsed cart:', parsedCart);
+      const parsedCart = JSON.parse(savedCart);      
       return { items: parsedCart };
     }
   } catch (error) {
@@ -71,13 +69,12 @@ export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, getInitialState());
 
   // Guardar en localStorage cada vez que cambie el estado
-  useEffect(() => {
-    console.log('Saving cart to localStorage:', state.items);
+  useEffect(() => {    
     localStorage.setItem('cart', JSON.stringify(state.items));
   }, [state.items]);
 
   const addToCart = (product, quantity = 1) => {
-    console.log('Adding to cart:', product, 'quantity:', quantity);
+    
     dispatch({
       type: 'ADD_TO_CART',
       payload: { ...product, quantity }
