@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import './styleLogin.css'
 import { useAuth } from '../context/AuthContext';
+import { CartContext } from "../context/CartContext";
 
 const Login = () => {
     const [form, setForm] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { loginWithEmail, loginWithGoogle, loginWithFacebook, error, setError } = useAuth();
+    const { fetchCart } = useContext(CartContext);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,7 +24,13 @@ const Login = () => {
         }
        
         try {
-            await loginWithEmail(form.email, form.password);
+            console.log('Iniciando proceso de login...');
+            const result = await loginWithEmail(form.email, form.password);
+            console.log('Login exitoso, resultado:', result);
+
+            // Levanta el carrito después del login
+            await fetchCart();
+
             setIsLoading(true);
             navigate("/admin");
         } catch (error) {

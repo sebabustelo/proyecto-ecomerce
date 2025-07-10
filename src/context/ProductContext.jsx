@@ -27,7 +27,7 @@ export const ProductProvider = ({ children }) => {
                         const productosConStockActualizado = datos.map(producto => {
                             const itemEnCarrito = carrito.find(item => item.id === producto.id);
                             if (itemEnCarrito) {
-                                return { ...producto, stock: Math.max(0, producto.stock - itemEnCarrito.cantidad) };
+                                return { ...producto, stock: Math.max(0, producto.stock - itemEnCarrito.quantity) };
                             }
                             return producto;
                         });

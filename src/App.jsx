@@ -22,6 +22,8 @@ import { UserProvider } from './context/UserContext'
 import { UsersProvider } from './context/UsersContext'
 import ResetPassword from './components/ResetPassword'
 import AdminPedidos from './pages/AdminPedidos'
+import ToastContainer from './components/ToastContainer'
+import { ToastProvider, useToast } from './context/ToastContext'
 import './index.css'
 
 function App() {
@@ -31,7 +33,9 @@ function App() {
         <UserProvider>
           <ProductProvider>
             <CartProvider>
-              <AppRoutes />
+              <ToastProvider>
+                <AppRoutes />
+              </ToastProvider>
             </CartProvider>
           </ProductProvider>
         </UserProvider>
@@ -42,6 +46,7 @@ function App() {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const { toasts, removeToast } = useToast();
 
   if (loading) {
     return (
@@ -104,6 +109,7 @@ function AppRoutes() {
           </RutasProtegidas>
         } />
       </Routes>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </>
   )
 }

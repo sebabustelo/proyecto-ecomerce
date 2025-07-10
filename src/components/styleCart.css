@@ -1,7 +1,7 @@
 /* Cart Drawer Styles */
 .cart-drawer {
   position: fixed !important;
-  top: 72px !important;
+  
   right: -400px !important;
   /*width: 400px !important;*/
   height: 400vh !important;

@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import React, { useState } from 'react';
 import Header from '../components/estaticos/Header'
 import Footer from '../components/estaticos/Footer'
 import ProductList from '../components/ProductosList'
@@ -8,6 +9,7 @@ import loading from '../assets/loading.gif'
 
 const GaleriaDeProductos = () => {
   const { cargando, productosFiltrados } = useContext(ProductContext);
+  const [showLoading, setShowLoading] = useState(false);
 
   return (
     <>
@@ -35,13 +37,29 @@ const GaleriaDeProductos = () => {
                   <p>Intenta con otros términos de búsqueda o filtros</p>
                 </div>
               ) : (
-                <ProductList productos={productosFiltrados} detalleProducto={1} />
+                <ProductList productos={productosFiltrados} detalleProducto={1} setShowLoading={setShowLoading} />
               )}
             </>
           )}
         </div>
       </main>
       <Footer />
+      {showLoading && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{ background: '#fff', borderRadius: 8, padding: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <img src={loading} alt="Cargando..." className="loading-img" style={{ width:300 , height: 100 }} />
+            <p className="loading-text" style={{ marginTop: 16, fontSize: 18 }}>Agregando al carrito...</p>
+          </div>
+        </div>
+      )}
     </>
   )
 }

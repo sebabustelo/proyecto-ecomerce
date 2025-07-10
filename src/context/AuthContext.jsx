@@ -130,6 +130,7 @@ export const AuthProvider = ({ children }) => {
     const loginWithEmail = async (email, password) => {
         try {
             setError(null);
+            console.log('Iniciando login con email:', email);
 
             const result = await fetch(`${API_BASE_URL}/login`, {
                 method: "POST",
@@ -142,22 +143,35 @@ export const AuthProvider = ({ children }) => {
                 })
             });
 
+            console.log('Respuesta del servidor:', result.status, result.statusText);
+
             if (!result.ok) {
                 const data = await result.json();
+                console.error('Error en login:', data);
                 setError(data.message || "Credenciales incorrectas.");
                 return;
             }
 
             const data = await result.json();
+            console.log('Datos de respuesta del login:', data);
 
             if (data.token) {
+                console.log('Token recibido, guardando en localStorage...');
                 localStorage.setItem("token", data.token);
+                console.log('Token guardado en localStorage');
                 setUser(data);
+                console.log('Usuario establecido en el contexto');
+                
+                // Verificar que el token se guardó correctamente
+                const savedToken = localStorage.getItem('token');
+                console.log('Token verificado en localStorage:', savedToken ? 'Guardado correctamente' : 'No se guardó');
             } else {
+                console.error('No se recibió token en la respuesta');
                 setError("Error: No se recibió el token de autenticación.");
             }
             return data;
         } catch (error) {
+            console.error('Error en loginWithEmail:', error);
             const errorMessage = getErrorMessage(error.code);
             setError(errorMessage);
             throw error;

@@ -1,14 +1,20 @@
 import React, { useState, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './styleProductos.css'
 import { useCart } from '../context/CartContext'
 import { ProductContext } from '../context/ProductContext'
+import { useToast } from '../context/ToastContext'
+import loadingGif from '../assets/loading.gif';
+import { isAuthenticated } from '../utils/authUtils';
 
-const Producto = ({ producto, detalleProducto }) => {
+const Producto = ({ producto, detalleProducto, setShowLoading }) => {
     const { nombre, precio, imagen } = producto;
     const [cantidad, setCantidad] = useState(1);
     const { addToCart } = useCart();
     const { actualizarStock, productoDisponible } = useContext(ProductContext);
+    const { showWarning, showError } = useToast();
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     // Obtener el stock actual del producto
     const stockActual = producto.stock || 0;
@@ -21,11 +27,30 @@ const Producto = ({ producto, detalleProducto }) => {
         if (cantidad > 1) setCantidad(cantidad - 1);
     };
 
-    const agregarAlCarrito = () => {
+    const agregarAlCarrito = async () => {
+        // Verificar autenticación
+        if (!isAuthenticated()) {
+            showWarning('Debes iniciar sesión para agregar productos al carrito');
+            navigate('/login');
+            return;
+        }
+
         if (productoDisponible(producto.id, cantidad)) {
-            addToCart(producto, cantidad);
-            actualizarStock(producto.id, cantidad);
-            setCantidad(1);
+            setLoading(true);
+            if (setShowLoading) setShowLoading(true);
+            
+            try {
+                await addToCart(producto, cantidad);
+                setCantidad(1);
+            } catch (error) {
+                console.error('Error al agregar al carrito:', error);
+                showError('Error al agregar al carrito. Intenta nuevamente.');
+            } finally {
+                setTimeout(() => {
+                    setLoading(false);
+                    if (setShowLoading) setShowLoading(false);
+                }, 700);
+            }
         }
     };
    
@@ -60,10 +85,14 @@ const Producto = ({ producto, detalleProducto }) => {
                 <button
                     className="button-producto"
                     onClick={agregarAlCarrito}
-                    disabled={stockActual === 0}
+                    disabled={stockActual === 0 || loading}
                     title="Agregar al carrito"
                 >
-                    <i className="fa-solid fa-cart-plus"></i>
+                    {loading ? (
+                        <img src={loadingGif} alt="Cargando..." style={{ width: 24, height: 24 }} />
+                    ) : (
+                        <i className="fa-solid fa-cart-plus"></i>
+                    )}
                 </button>
             </div>
         </section>

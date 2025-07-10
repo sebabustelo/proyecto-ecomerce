@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '../utils/authUtils';
 import './styleCart.css';
 
 const Cart = ({ isOpen, onClose }) => {
@@ -11,13 +12,40 @@ const Cart = ({ isOpen, onClose }) => {
     getTotalPrice, 
     getTotalItems 
   } = useCart();
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
 
-  console.log('Cart component render - isOpen:', isOpen, 'items:', items);
-
-  if (!isOpen) {
-    console.log('Cart not open, returning null');
+  if (!isOpen) {    
     return null;
+  }
+
+  // Verificar autenticación
+  if (!isAuthenticated()) {
+    return (
+      <div className="cart-drawer open">
+        <div className="cart-header">
+          <h3>Carrito de Compras</h3>
+          <button onClick={onClose} className='close-button'>×</button>
+        </div>
+        <div className="cart-content">
+          <div className="cart-empty">
+            <div className="empty-icon">
+              <i className="fa-solid fa-user-lock"></i>
+            </div>
+            <h2>Debes iniciar sesión</h2>
+            <p>Para ver tu carrito, necesitas estar logueado</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => {
+                onClose();
+                navigate('/login');
+              }}
+            >
+              Iniciar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (items.length === 0) {
@@ -49,6 +77,24 @@ const Cart = ({ isOpen, onClose }) => {
     );
   }
 
+  const handleRemoveFromCart = async (productId) => {
+    try {
+      await removeFromCart(productId);
+    } catch (error) {
+      console.error('Error al eliminar del carrito:', error);
+      alert('Error al eliminar del carrito. Intenta nuevamente.');
+    }
+  };
+
+  const handleUpdateQuantity = async (productId, newQuantity) => {
+    try {
+      await updateQuantity(productId, newQuantity);
+    } catch (error) {
+      console.error('Error al actualizar cantidad:', error);
+      alert('Error al actualizar cantidad. Intenta nuevamente.');
+    }
+  };
+
   return (
     <div className="cart-drawer open">
       <div className="cart-header">
@@ -74,7 +120,7 @@ const Cart = ({ isOpen, onClose }) => {
               <div className="item-quantity">
                 <button 
                   className="quantity-btn"
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                   disabled={item.quantity <= 1}
                 >
                   -
@@ -82,7 +128,7 @@ const Cart = ({ isOpen, onClose }) => {
                 <span className="quantity">{item.quantity}</span>
                 <button 
                   className="quantity-btn"
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                 >
                   +
                 </button>
@@ -92,7 +138,7 @@ const Cart = ({ isOpen, onClose }) => {
               </div>
               <button 
                 className="remove-btn"
-                onClick={() => removeFromCart(item.id)}
+                onClick={() => handleRemoveFromCart(item.id)}
               >
                 <i className="fa-solid fa-trash"></i>
               </button>

@@ -18,19 +18,27 @@ const Header = () => {
     const handleClose = () => setOpen(false);
     const toggleUserMenu = () => setUserMenuOpen(!isUserMenuOpen);
     const toggleCart = () => {
-        console.log('Toggle cart clicked, current state:', isCartOpen);
         setIsCartOpen(!isCartOpen);
-        console.log('New cart state will be:', !isCartOpen);
     };
     const closeCart = () => {
-        console.log('Closing cart');
         setIsCartOpen(false);
+    };
+
+    // Cerrar menú al hacer clic en el overlay
+    const handleOverlayClick = () => {
+        setOpen(false);
+        setUserMenuOpen(false);
+    };
+
+    // Cerrar dropdown de usuario al hacer clic fuera
+    const handleUserDropdownClose = () => {
+        setUserMenuOpen(false);
     };
 
     const isAdmin = user && user.roles && user.roles.some(role => role.name === "admin");
     const cartItemsCount = getTotalItems();
 
-    console.log('Header render - isCartOpen:', isCartOpen, 'cartItemsCount:', cartItemsCount);
+
 
     return (
         <>
@@ -39,79 +47,94 @@ const Header = () => {
                     <Link to="/" className="logo-link" onClick={handleClose}>
                         <img src="/img/logo.png" alt="Logo" className="logo-img" />
                     </Link>
-                    <div className="hamburger" onClick={handleToggle}>
+                    {/* Cart Icon */}
+
+                    <Link to="#" className='nav-link cart-link icon-only' onClick={toggleCart}>
+                        <i className="fa-solid fa-cart-shopping"></i>
+                        {cartItemsCount > 0 && (
+                            <span className="cart-badge">{cartItemsCount}</span>
+                        )}
+                    </Link>
+
+                    <div className={`hamburger ${open ? 'active' : ''}`} onClick={handleToggle}>
                         <span className="bar"></span>
                         <span className="bar"></span>
                         <span className="bar"></span>
                     </div>
+                    
+                    {/* Overlay para cerrar el menú */}
+                    <div className={`nav-overlay ${open ? 'open' : ''}`} onClick={handleOverlayClick}></div>
+                    
+                    {/* Overlay para cerrar el dropdown de usuario */}
+                    {isUserMenuOpen && (
+                        <div className="user-dropdown-overlay" onClick={handleUserDropdownClose}></div>
+                    )}
+                    
                     <ul className={`nav-list ${open ? 'open' : ''}`}>
                         <li className="nav-item">
-                            <Link to="/" className='nav-link' onClick={handleClose}>Home</Link>
+                            <Link to="/" className='nav-link' onClick={handleClose}>
+                                <i className="fa-solid fa-home"></i> Home
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/productos" className='nav-link' onClick={handleClose}>Productos</Link>
+                            <Link to="/productos" className='nav-link' onClick={handleClose}>
+                                <i className="fa-solid fa-box"></i> Productos
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/acercade" className='nav-link' onClick={handleClose}>Acerca de</Link>
+                            <Link to="/acercade" className='nav-link' onClick={handleClose}>
+                                <i className="fa-solid fa-info-circle"></i> Acerca de
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/contactos" className='nav-link' onClick={handleClose}>Contactos</Link>
+                            <Link to="/contactos" className='nav-link' onClick={handleClose}>
+                                <i className="fa-solid fa-envelope"></i> Contactos
+                            </Link>
                         </li>
+
                         {isAdmin && (
                             <li className="nav-item">
                                 <a
                                     href="/admin"
-                                    className="nav-link"                            
+                                    className="nav-link"
                                     rel="noopener noreferrer"
                                 >
                                     <i className="fa-solid fa-gears"></i> Panel Admin
                                 </a>
                             </li>
                         )}
-                        <div className="nav-icons">
-                            {/* User Menu */}
-                            <div className="user-menu-container nav-item">
-                                <button className='nav-link' onClick={toggleUserMenu}>
-                                    <i className="fa-solid fa-user"></i>
-                                </button>
-                                {isUserMenuOpen && (
-                                    <div className="user-dropdown">
-                                        {user ? (
-                                            <Link to="/" className="dropdown-item" onClick={() => { 
-                                                clearCart(); 
-                                                logout(); 
-                                                setUserMenuOpen(false); 
-                                                navigate('/'); 
-                                            }}>
-                                                <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                        <li className="nav-item">
+                            <Link to="#" className='nav-link icon-only' onClick={toggleUserMenu}>
+                                <i className="fa-solid fa-user-circle"></i>
+                            </Link>
+                            {isUserMenuOpen && (
+                                <div className="user-dropdown">
+                                    {user ? (
+                                        <Link to="/" className="dropdown-item" onClick={() => {
+                                            //clearCart(); 
+                                            logout();
+                                            setUserMenuOpen(false);
+                                            navigate('/');
+                                        }}>
+                                            <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                                        </Link>
+                                    ) : (
+                                        <>
+                                            <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                                <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
                                             </Link>
-                                        ) : (
-                                            <>
-                                                <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                                                    <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
-                                                </Link>
-                                                <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                                                    <i className="fa-solid fa-user-plus"></i> Registrarse
-                                                </Link>
-                                            </>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                            {/* Cart Icon */}
-                            <div className="user-menu-container nav-item">
-                                <button className='nav-link' onClick={toggleCart}>
-                                    <i className="fa-solid fa-cart-shopping"></i>
-                                    {cartItemsCount > 0 && (
-                                        <span className="cart-badge">{cartItemsCount}</span>
+                                            <Link to="/registrarse" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                                <i className="fa-solid fa-user-plus"></i> Registrarse
+                                            </Link>
+                                        </>
                                     )}
-                                </button>
-                            </div>
-                        </div>
+                                </div>
+                            )}
+                        </li>
                     </ul>
                 </nav>
             </header>
-            
+
             {/* Cart Modal */}
             {isCartOpen && (
                 <>

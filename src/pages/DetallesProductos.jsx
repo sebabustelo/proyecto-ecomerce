@@ -194,19 +194,23 @@ const DetallesProductos = ({ agregarProductoCarrito }) => {
                 <section className="detalle-producto-reviews">
                     <h2>Reseñas de clientes</h2>
                     <form className="form-review" onSubmit={handleAddReview}>
-                        <input
-                            type="text"
-                            placeholder="Tu nombre"
-                            value={reviewInput.nombre}
-                            onChange={e => setReviewInput({ ...reviewInput, nombre: e.target.value })}
-                            required
-                        />
-                        <select
-                            value={reviewInput.rating}
-                            onChange={e => setReviewInput({ ...reviewInput, rating: Number(e.target.value) })}
-                        >
-                            {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} estrella{n>1?'s':''}</option>)}
-                        </select>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            <input
+                                type="text"
+                                placeholder="Tu nombre"
+                                value={reviewInput.nombre}
+                                onChange={e => setReviewInput({ ...reviewInput, nombre: e.target.value })}
+                                required
+                                style={{ flex: 2 }}
+                            />
+                            <select
+                                value={reviewInput.rating}
+                                onChange={e => setReviewInput({ ...reviewInput, rating: Number(e.target.value) })}
+                                style={{ flex: 1, minWidth: 120 }}
+                            >
+                                {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} estrella{n>1?'s':''}</option>)}
+                            </select>
+                        </div>
                         <textarea
                             placeholder="Escribe tu reseña..."
                             value={reviewInput.comentario}

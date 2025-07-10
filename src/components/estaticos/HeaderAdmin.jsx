@@ -51,7 +51,7 @@ const Header = () => {
                     {user && (
                         <li className="nav-item">
                             <Link to="/" className="nav-link" onClick={() => { 
-                                clearCart(); 
+                                //clearCart(); 
                                 logout(); 
                                 navigate('/'); 
                             }}>
