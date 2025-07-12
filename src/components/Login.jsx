@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import './styleLogin.css'
 import { useAuth } from '../context/AuthContext';
@@ -8,8 +8,18 @@ const Login = () => {
     const [form, setForm] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { loginWithEmail, loginWithGoogle, loginWithFacebook, error, setError } = useAuth();
+    const { loginWithEmail, loginWithGoogle, loginWithFacebook, error, setError, user } = useAuth();
     const { fetchCart } = useContext(CartContext);
+
+    // Navegar automáticamente cuando el usuario se autentica
+    useEffect(() => {
+        if (user && !isLoading) {
+            console.log('Usuario autenticado, navegando a /productos');
+            fetchCart().then(() => {
+                navigate("/productos");
+            });
+        }
+    }, [user, navigate, fetchCart, isLoading]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,7 +54,8 @@ const Login = () => {
         setIsLoading(true);
         try {
             await loginWithGoogle();
-            // No necesitamos navegar aquí porque redirect lo maneja
+            console.log('Google login exitoso, navegando...');
+            // La navegación se manejará automáticamente en el useEffect
         } catch (error) {
             console.error('Google login error:', error);
             setIsLoading(false);
@@ -55,7 +66,8 @@ const Login = () => {
         setIsLoading(true);
         try {
             await loginWithFacebook();
-            // No necesitamos navegar aquí porque redirect lo maneja
+            console.log('Facebook login exitoso, navegando...');
+            // La navegación se manejará automáticamente en el useEffect
         } catch (error) {
             console.error('Facebook login error:', error);
             setIsLoading(false);

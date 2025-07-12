@@ -3,9 +3,11 @@ import { API_BASE_URL } from '../utils/apiConfig';
 import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
 import loading_img from '../assets/loading.gif'
+import { useRealTime } from '../context/RealTimeContext';
 import './Users.css';
 
 const AdminProductos = () => {
+    const { products: realTimeProducts, lastUpdate, isPolling, forceUpdate } = useRealTime();
     const [productos, setProductos] = useState([]);
     const [filteredProductos, setFilteredProductos] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -22,6 +24,8 @@ const AdminProductos = () => {
         category_id: '',
         image: ''
     });
+    const [categories, setCategories] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
     // Función para verificar el token
     const checkToken = async () => {
@@ -43,8 +47,26 @@ const AdminProductos = () => {
         }
     };
 
+    // Función para recargar productos desde el servidor
+    const refreshProductos = async () => {
+        setRefreshing(true);
+        try {
+            const result = await forceUpdate();
+            if (result) {
+                setProductos(result);
+                setFilteredProductos(result);
+                return true;
+            }
+        } catch (error) {
+            console.error('Error al recargar productos:', error);
+        } finally {
+            setRefreshing(false);
+        }
+        return false;
+    };
+
     useEffect(() => {
-        const fetchProductos = async () => {
+        const fetchData = async () => {
             try {
                 // Verificar si el usuario está logueado
                 const token = localStorage.getItem('token');
@@ -54,22 +76,59 @@ const AdminProductos = () => {
                     return;
                 }
 
-                const response = await fetch(`${API_BASE_URL}/products`);
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                // Cargar categorías (si hay endpoint disponible)
+                try {
+                    const categoriesResponse = await fetch(`${API_BASE_URL}/categories`);
+                    if (categoriesResponse.ok) {
+                        const categoriesData = await categoriesResponse.json();
+                        setCategories(categoriesData);
+                    } else {
+                        // Si no hay endpoint de categorías, usar categorías por defecto
+                        setCategories([
+                            { id: 1, name: 'Cucha' },
+                            { id: 2, name: 'Funda' }
+                        ]);
+                    }
+                } catch (err) {
+                    console.log('No se pudieron cargar las categorías, usando valores por defecto');
+                    setCategories([
+                        { id: 1, name: 'Cucha' },
+                        { id: 2, name: 'Funda' }
+                    ]);
                 }
-                const data = await response.json();
-                setProductos(data);
-                setFilteredProductos(data);
+
+                // Fetch manual de productos si realTimeProducts está vacío
+                if (!realTimeProducts || realTimeProducts.length === 0) {
+                    setLoading(true);
+                    try {
+                        const res = await fetch(`${API_BASE_URL}/products`);
+                        if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+                        const data = await res.json();
+                        setProductos(data);
+                        setFilteredProductos(data);
+                    } catch (err) {
+                        setError('No se pudieron cargar los productos');
+                    } finally {
+                        setLoading(false);
+                    }
+                }
             } catch (err) {
-                console.error('Error al obtener productos:', err);
+                console.error('Error al obtener datos:', err);
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProductos();
+        fetchData();
     }, []);
+
+    // Usar productos del contexto de tiempo real
+    useEffect(() => {
+        if (realTimeProducts.length > 0) {
+            setProductos(realTimeProducts);
+            setFilteredProductos(realTimeProducts);
+        }
+    }, [realTimeProducts]);
 
     // Función para filtrar productos
     useEffect(() => {
@@ -116,10 +175,14 @@ const AdminProductos = () => {
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
 
-                // Eliminar el producto de la lista local
-                setProductos(prevProductos =>
-                    prevProductos.filter(p => p.id !== productId)
-                );
+                // Recargar la lista completa de productos desde el servidor
+                const refreshSuccess = await refreshProductos();
+                if (!refreshSuccess) {
+                    // Si falla la recarga, eliminar localmente
+                    setProductos(prevProductos =>
+                        prevProductos.filter(p => p.id !== productId)
+                    );
+                }
 
                 alert('Producto eliminado correctamente');
 
@@ -180,17 +243,21 @@ const AdminProductos = () => {
 
                 result = await response.json();
 
-                // Actualizar la lista de productos
-                setProductos(prevProductos =>
-                    prevProductos.map(p =>
-                        p.id === selectedProduct.id ? result : p
-                    )
-                );
+                // Recargar la lista completa de productos desde el servidor
+                const refreshSuccess = await refreshProductos();
+                if (!refreshSuccess) {
+                    // Si falla la recarga, actualizar localmente
+                    setProductos(prevProductos =>
+                        prevProductos.map(p =>
+                            p.id === selectedProduct.id ? result : p
+                        )
+                    );
+                }
 
                 alert('Producto actualizado correctamente');
             } else {
                 // Crear nuevo producto
-                const url = `${API_BASE_URL}/products`;
+                const url = `${API_BASE_URL}/products/add`;
                 console.log('Creando producto en URL:', url);
                 console.log('Datos a enviar:', productDataToSend);
                 console.log('Token:', token ? 'Presente' : 'No encontrado');
@@ -210,8 +277,12 @@ const AdminProductos = () => {
 
                 result = await response.json();
 
-                // Agregar el nuevo producto a la lista
-                setProductos(prevProductos => [...prevProductos, result]);
+                // Recargar la lista completa de productos desde el servidor
+                const refreshSuccess = await refreshProductos();
+                if (!refreshSuccess) {
+                    // Si falla la recarga, agregar el producto localmente
+                    setProductos(prevProductos => [...prevProductos, result]);
+                }
 
                 alert('Producto creado correctamente');
             }
@@ -223,7 +294,7 @@ const AdminProductos = () => {
                 description: '',
                 price: '',
                 stock: '',
-                category_id: '',
+                category_id: '1',
                 image: ''
             });
             setIsEditing(false);
@@ -258,7 +329,7 @@ const AdminProductos = () => {
                                     description: '',
                                     price: '',
                                     stock: '',
-                                    category_id: '',
+                                    category_id: '1',
                                     image: ''
                                 });
                                 setIsEditing(false);
@@ -294,7 +365,47 @@ const AdminProductos = () => {
 
                     {loading ? (
                         <img src={loading_img} alt="Cargando..." className="loading-img" />
+                    ) : refreshing ? (
+                        <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                            <i className="fa-solid fa-sync-alt fa-spin" style={{ marginRight: '10px' }}></i>
+                            Actualizando lista de productos...
+                        </div>
                     ) : (
+                        <>
+                            {/* Indicador de actualización en tiempo real */}
+                            {isPolling && (
+                                <div style={{ 
+                                    textAlign: 'center', 
+                                    padding: '10px', 
+                                    color: '#28a745', 
+                                    fontSize: '0.9rem',
+                                    backgroundColor: '#f8f9fa',
+                                    borderBottom: '1px solid #dee2e6'
+                                }}>
+                                    <i className="fa-solid fa-wifi" style={{ marginRight: '5px' }}></i>
+                                    Actualización en tiempo real activa
+                                    {lastUpdate && (
+                                        <span style={{ marginLeft: '10px', color: '#6c757d' }}>
+                                            Última actualización: {lastUpdate.toLocaleTimeString()}
+                                        </span>
+                                    )}
+                                    <button 
+                                        onClick={() => forceUpdate()}
+                                        style={{
+                                            marginLeft: '10px',
+                                            padding: '2px 8px',
+                                            fontSize: '0.8rem',
+                                            backgroundColor: '#007bff',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <i className="fa-solid fa-sync-alt"></i> Actualizar ahora
+                                    </button>
+                                </div>
+                            )}
                         <div className="users-list">
                             <table>
                                 <thead>
@@ -327,7 +438,7 @@ const AdminProductos = () => {
                                                                     description: producto.descripcion || '',
                                                                     price: producto.precio || '',
                                                                     stock: producto.stock || '',
-                                                                    category_id: producto.categoria || '',
+                                                                    category_id: '1', // Usar categoría por defecto hasta que se implemente la detección automática
                                                                     image: producto.imagen || ''
                                                                 });
                                                                 setIsEditing(true);
@@ -412,6 +523,22 @@ const AdminProductos = () => {
                                                 />
                                             </div>
                                             <div className="form-group">
+                                                <label htmlFor="category_id">Categoría</label>
+                                                <select
+                                                    id="category_id"
+                                                    className="form-control"
+                                                    value={productData.category_id}
+                                                    onChange={(e) => setProductData({ ...productData, category_id: e.target.value })}
+                                                >
+                                                    <option value="">Seleccionar categoría</option>
+                                                    {categories.map((category) => (
+                                                        <option key={category.id} value={category.id}>
+                                                            {category.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="form-group">
                                                 <label htmlFor="image">URL de la imagen</label>
                                                 <input
                                                     type="text"
@@ -441,6 +568,7 @@ const AdminProductos = () => {
                                 </div>
                             )}
                         </div>
+                        </>
                     )}
                 </main>
                 <Footer />

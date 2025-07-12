@@ -41,7 +41,7 @@ const Register = () => {
         setIsLoading(true);
         try {
             await registerWithEmail(form.email, form.password, form.name);
-            navigate("/admin");
+            navigate("/productos");
         } catch (error) {
             console.error('Register error:', error);
         } finally {

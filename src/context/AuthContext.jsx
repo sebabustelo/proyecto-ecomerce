@@ -8,7 +8,8 @@ import {
     signOut,
     onAuthStateChanged,
     updateProfile,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    signInWithPopup
 } from 'firebase/auth';
 import { auth, googleProvider, facebookProvider } from '../firebase';
 
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }) => {
                         console.log('Using endpoint:', endpoint);
                         
                         // Llamar a la API con el token del proveedor
-                        console.log('Calling API with token...');
+                        console.log('Calling API with token...', providerToken);
                         const apiResponse = await fetch(`${API_BASE_URL}/${endpoint}`, {
                             method: "POST",
                             headers: {
@@ -70,8 +71,8 @@ export const AuthProvider = ({ children }) => {
                         const apiData = await apiResponse.json();
                         console.log('API response data:', apiData);
                         
-                        if (apiData.Token) {
-                            localStorage.setItem("token", apiData.Token);
+                        if (apiData.token) {
+                            localStorage.setItem("token", apiData.token);
                             setUser(apiData);
                             console.log('Login successful, user set:', apiData);
                             // Limpiar la bandera de login reciente
@@ -115,8 +116,38 @@ export const AuthProvider = ({ children }) => {
             try {
                 if (!auth) return;
                 const result = await getRedirectResult(auth);
-                if (result) {
-                    console.log('Redirect result found, but using onAuthStateChanged instead');
+                if (result && result.user) {
+                    console.log('Procesando login social desde getRedirectResult:', result);
+                    const providerToken = await result.user.getIdToken();
+                    const provider = result.providerId || result.user.providerData[0]?.providerId;
+                    const endpoint = provider === 'google.com' ? 'google-login' : 'facebook-login';
+                    console.log('Llamando a la API social:', endpoint, providerToken);
+                    const apiResponse = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            id_token: providerToken
+                        })
+                    });
+                    console.log('API response status (social):', apiResponse.status);
+                    if (!apiResponse.ok) {
+                        const errorData = await apiResponse.json();
+                        console.error('API error (social):', errorData);
+                        setError(errorData.message || `Error en el login con ${provider === 'google.com' ? 'Google' : 'Facebook'}`);
+                        return;
+                    }
+                    const apiData = await apiResponse.json();
+                    console.log('API response data (social):', apiData);
+                    if (apiData.token) {
+                        localStorage.setItem("token", apiData.token);
+                        setUser(apiData);
+                        console.log('Login social exitoso, usuario seteado:', apiData);
+                    } else {
+                        setError("Error: No se recibió el token de autenticación del servidor.");
+                    }
+                    sessionStorage.removeItem('recentLogin');
                 }
             } catch (error) {
                 console.error('Redirect result error:', error);
@@ -201,19 +232,41 @@ export const AuthProvider = ({ children }) => {
     const loginWithGoogle = async () => {
         try {
             setError(null);
-            console.log('Iniciando login con Google...');
-            console.log('Auth domain:', auth.config.authDomain);
-            console.log('Current URL:', window.location.href);
-            
-            // Establecer bandera de login reciente
-            sessionStorage.setItem('recentLogin', 'true');
-            // Iniciar el proceso de login con Google
-            await signInWithRedirect(auth, googleProvider);
+            setLoading(true);
+            // Usa popup en vez de redirect
+            const result = await signInWithPopup(auth, googleProvider);
+            // Si llega aquí, el usuario está autenticado en Firebase
+            const providerToken = await result.user.getIdToken();
+            const provider = result.providerId || result.user.providerData[0]?.providerId;
+            const endpoint = provider === 'google.com' ? 'google-login' : 'facebook-login';
+            const apiResponse = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id_token: providerToken
+                })
+            });
+            if (!apiResponse.ok) {
+                const errorData = await apiResponse.json();
+                setError(errorData.message || `Error en el login con ${provider === 'google.com' ? 'Google' : 'Facebook'}`);
+                setLoading(false);
+                return;
+            }
+            const apiData = await apiResponse.json();
+            if (apiData.token) {
+                localStorage.setItem("token", apiData.token);
+                setUser(apiData);
+                console.log('Google login exitoso, usuario establecido:', apiData);
+            } else {
+                setError("Error: No se recibió el token de autenticación del servidor.");
+                setLoading(false);
+            }
         } catch (error) {
             console.error('Error en loginWithGoogle:', error);
-            const errorMessage = getErrorMessage(error.code);
-            setError(errorMessage);
-            throw error;
+            setError(error.message || "Error en login con Google");
+            setLoading(false);
         }
     };
 

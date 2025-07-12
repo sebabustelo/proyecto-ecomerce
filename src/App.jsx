@@ -24,6 +24,7 @@ import ResetPassword from './components/ResetPassword'
 import AdminPedidos from './pages/AdminPedidos'
 import ToastContainer from './components/ToastContainer'
 import { ToastProvider, useToast } from './context/ToastContext'
+import { RealTimeProvider } from './context/RealTimeContext'
 import './index.css'
 
 function App() {
@@ -31,13 +32,15 @@ function App() {
     <Router>
       <AuthProvider>
         <UserProvider>
-          <ProductProvider>
-            <CartProvider>
-              <ToastProvider>
-                <AppRoutes />
-              </ToastProvider>
-            </CartProvider>
-          </ProductProvider>
+          <RealTimeProvider>
+            <ProductProvider>
+              <CartProvider>
+                <ToastProvider>
+                  <AppRoutes />
+                </ToastProvider>
+              </CartProvider>
+            </ProductProvider>
+          </RealTimeProvider>
         </UserProvider>
       </AuthProvider>
     </Router>

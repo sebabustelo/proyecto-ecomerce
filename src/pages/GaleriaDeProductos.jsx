@@ -1,19 +1,56 @@
 import { useContext } from 'react'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/estaticos/Header'
 import Footer from '../components/estaticos/Footer'
 import ProductList from '../components/ProductosList'
 import SearchAndFilters from '../components/SearchAndFilters'
 import { ProductContext } from '../context/ProductContext'
+import { useRealTime } from '../context/RealTimeContext'
 import loading from '../assets/loading.gif'
 
 const GaleriaDeProductos = () => {
   const { cargando, productosFiltrados } = useContext(ProductContext);
   const [showLoading, setShowLoading] = useState(false);
+  const [showUpdateNotification, setShowUpdateNotification] = useState(false);
+  
+  // Intentar usar el contexto de tiempo real
+  let lastUpdate = null;
+  try {
+    const realTimeContext = useRealTime();
+    lastUpdate = realTimeContext.lastUpdate;
+  } catch (error) {
+    // Si no está disponible, no mostrar notificación
+  }
+
+  // Mostrar notificación de actualización cuando cambia lastUpdate
+  useEffect(() => {
+    if (lastUpdate) {
+      setShowUpdateNotification(true);
+      setTimeout(() => setShowUpdateNotification(false), 3000);
+    }
+  }, [lastUpdate]);
 
   return (
     <>
       <Header />
+      {/* Notificación de actualización */}
+      {showUpdateNotification && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#28a745',
+          color: 'white',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          zIndex: 1000,
+          fontSize: '0.9rem',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+        }}>
+          <i className="fa-solid fa-sync-alt" style={{ marginRight: '5px' }}></i>
+          Productos actualizados
+        </div>
+      )}
       <main className="main-content">
         <div className="hero-section">
           <h1 className="main-title">

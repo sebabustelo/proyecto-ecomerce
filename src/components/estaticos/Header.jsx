@@ -94,18 +94,23 @@ const Header = () => {
 
                         {isAdmin && (
                             <li className="nav-item">
-                                <a
-                                    href="/admin"
+                                <Link
+                                    to="/admin"
                                     className="nav-link"
-                                    rel="noopener noreferrer"
+                                    onClick={handleClose}
                                 >
                                     <i className="fa-solid fa-gears"></i> Panel Admin
-                                </a>
+                                </Link>
                             </li>
                         )}
                         <li className="nav-item">
-                            <Link to="#" className='nav-link icon-only' onClick={toggleUserMenu}>
+                            <Link to="#" className='nav-link' onClick={toggleUserMenu}>
                                 <i className="fa-solid fa-user-circle"></i>
+                                {user && (
+                                    <span style={{ marginLeft: '5px' }}>
+                                        {user.email || user.name || 'Usuario'}
+                                    </span>
+                                )}
                             </Link>
                             {isUserMenuOpen && (
                                 <div className="user-dropdown">

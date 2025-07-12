@@ -7,8 +7,7 @@ const firebaseConfig = {
   projectId: "petplace-dv69c",
   storageBucket: "petplace-dv69c.appspot.com",
   messagingSenderId: "285580531726",
-  appId: "1:285580531726:web:370768542fe02481de045f",
-  // measurementId: "G-XXXXXXXXXX" // opcional
+  appId: "1:285580531726:web:370768542fe02481de045f"
 };
 
 
