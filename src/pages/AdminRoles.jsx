@@ -4,17 +4,18 @@ import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
 import loading_img from '../assets/loading.gif'
 import './Users.css';
+import './AdminRoles.css';
 
 const AdminRoles = () => {
     const [roles, setRoles] = useState([]);
-    const [apis, setApis] = useState([]);
-    const [filteredRoles, setFilteredRoles] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedRole, setSelectedRole] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [apis, setApis] = useState([]);
+    const [filteredRoles, setFilteredRoles] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState(null);
     const [roleData, setRoleData] = useState({
         name: '',
         description: '',
@@ -298,16 +299,30 @@ const AdminRoles = () => {
         }));
     };
 
-    // Agrupa las APIs por categoría
+    // Agrupa las APIs por categoría y las ordena alfabéticamente
     function groupApisByCategory(apis) {
         const groups = {};
         apis.forEach(api => {
-            const match = api.endpoint.match(/^\/([^\/]+)/);
+            const match = api.endpoint.match(/^\/([^/]+)/);
             const category = match ? match[1] : 'otros';
             if (!groups[category]) groups[category] = [];
             groups[category].push(api);
         });
-        return groups;
+        
+        // Ordenar las APIs dentro de cada grupo alfabéticamente por endpoint
+        Object.keys(groups).forEach(category => {
+            groups[category].sort((a, b) => a.endpoint.localeCompare(b.endpoint));
+        });
+        
+        // Ordenar las categorías alfabéticamente
+        const sortedGroups = {};
+        Object.keys(groups)
+            .sort((a, b) => a.localeCompare(b))
+            .forEach(category => {
+                sortedGroups[category] = groups[category];
+            });
+        
+        return sortedGroups;
     }
 
     return (
@@ -317,7 +332,7 @@ const AdminRoles = () => {
             <main className="main-content">
                 <div className="header-container">
                     <h1 className="main-title">
-                        <i className="fa-solid fa-user-tag" style={{ marginRight: "0.5em" }}></i>
+                        <i className="fa-solid fa-user-tag main-title-icon"></i>
                         Roles y Permisos
                     </h1>
                     <button
@@ -382,15 +397,15 @@ const AdminRoles = () => {
                                                 {truncateText(role.description)}
                                             </td>
                                             <td>
-                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                                                <div className="apis-container">
                                                     {role.apis.slice(0, 2).map((api, index) => (
-                                                        <span key={api.id || index} className="role-badge" style={{ backgroundColor: '#4caf50' }}>
+                                                        <span key={api.id || index} className="role-badge">
                                                             {api.endpoint}
                                                         </span>
                                                     ))}
                                                     {role.apis.length > 2 && (
                                                         <button
-                                                            style={{ marginLeft: '0.5em', background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                                            className="view-all-button"
                                                             onClick={() => {
                                                                 setApisModalList(role.apis);
                                                                 setApisModalRoleName(role.name);
@@ -431,7 +446,7 @@ const AdminRoles = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" style={{ textAlign: 'center' }}>
+                                        <td colSpan="4" className="empty-state">
                                             {searchTerm ? 'No se encontraron roles' : 'No hay roles disponibles'}
                                         </td>
                                     </tr>
@@ -439,7 +454,7 @@ const AdminRoles = () => {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                    <td colSpan="4" className="table-footer">
                                         Total de roles: {filteredRoles.length}
                                     </td>
                                 </tr>
@@ -448,7 +463,7 @@ const AdminRoles = () => {
 
                         {showModal && (
                             <div className="modal">
-                                <div className="modal-content" style={{ maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto' }}>
+                                <div className="modal-content role-modal-content">
                                     <h2>{isEditing ? 'Editar Rol' : 'Nuevo Rol'}</h2>
                                     <form onSubmit={handleSubmit}>
                                         <div className="form-group">
@@ -473,61 +488,34 @@ const AdminRoles = () => {
                                         </div>
                                         <div className="form-group">
                                             <label>APIs Asignadas</label>
-                                            <div style={{
-                                                maxHeight: '250px',
-                                                overflowY: 'auto',
-                                                border: '1px solid #ddd',
-                                                borderRadius: '4px',
-                                                padding: '0.5rem',
-                                                background: '#f9f9f9',
-                                            }}>
+                                            <div className="apis-selection-container">
                                                 {Object.entries(groupApisByCategory(apis)).map(([category, apisInGroup]) => (
-                                                    <div key={category} style={{ marginBottom: '1em', border: '1px solid #eee', borderRadius: 6 }}>
+                                                    <div key={category} className="api-group">
                                                         <div
-                                                            style={{
-                                                                background: '#f0f4f8',
-                                                                padding: '0.5em 1em',
-                                                                fontWeight: 600,
-                                                                cursor: 'pointer',
-                                                                borderRadius: '6px 6px 0 0',
-                                                                userSelect: 'none'
-                                                            }}
+                                                            className="api-group-header"
                                                             onClick={() => setOpenGroups(prev => ({ ...prev, [category]: !prev[category] }))}
                                                         >
                                                             {category.charAt(0).toUpperCase() + category.slice(1)} ({apisInGroup.length})
-                                                            <span style={{ float: 'right' }}>{openGroups[category] ? '▲' : '▼'}</span>
+                                                            <span className="api-group-toggle">{openGroups[category] ? '▲' : '▼'}</span>
                                                         </div>
                                                         {openGroups[category] && (
-                                                            <div style={{ padding: '0.5em 1em', background: '#fff' }}>
+                                                            <div className="api-group-content">
                                                                 {apisInGroup.map(api => {
                                                                     const selected = roleData.apis.includes(api.ID || api.id);
                                                                     return (
                                                                         <label
                                                                             key={api.ID || api.id}
-                                                                            style={{
-                                                                                display: 'flex',
-                                                                                alignItems: 'center',
-                                                                                gap: '0.5rem',
-                                                                                marginBottom: '0.25rem',
-                                                                                padding: '0.25rem 0.5rem',
-                                                                                borderRadius: 16,
-                                                                                background: selected ? '#e3f2fd' : '#fff',
-                                                                                border: selected ? '1.5px solid #2196f3' : '1px solid #ddd',
-                                                                                boxShadow: selected ? '0 2px 8px rgba(33,150,243,0.08)' : 'none',
-                                                                                cursor: 'pointer',
-                                                                                transition: 'background 0.2s, border 0.2s'
-                                                                            }}
+                                                                            className={`api-option ${selected ? 'selected' : ''}`}
                                                                         >
                                                                             <input
                                                                                 type="checkbox"
                                                                                 checked={selected}
                                                                                 onChange={() => handleApiToggle(api.ID || api.id)}
-                                                                                style={{ accentColor: '#2196f3' }}
                                                                             />
-                                                                            <span style={{ fontSize: '0.95rem', fontWeight: selected ? 600 : 400, color: selected ? '#1976d2' : '#333' }}>
+                                                                            <span className="api-option-text">
                                                                                 {api.endpoint}
                                                                                 {api.description && (
-                                                                                    <span style={{ color: '#666', marginLeft: '0.5rem', fontWeight: 400, fontSize: '0.9em' }}>
+                                                                                    <span className="api-option-description">
                                                                                         - {api.description}
                                                                                     </span>
                                                                                 )}
@@ -564,18 +552,76 @@ const AdminRoles = () => {
                 )}
             </main>
             <Footer />
-            {/* Modal para mostrar todas las APIs asociadas al rol */}
+                        {/* Modal para mostrar todas las APIs asociadas al rol */}
             {showApisModal && (
-                <div className="modal" style={{ zIndex: 9999 }}>
-                    <div className="modal-content" style={{ maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto' }}>
-                        <h2>APIs de rol: {apisModalRoleName}</h2>
-                        <ul style={{ paddingLeft: '1.2em' }}>
-                            {apisModalList.map((api) => (
-                                <li key={api.id}>{api.endpoint} <span style={{ color: '#888', fontSize: '0.9em' }}>{api.description}</span></li>
-                            ))}
-                        </ul>
-                        <div style={{ textAlign: 'right', marginTop: '1em' }}>
-                            <button className="cancel-button" onClick={() => setShowApisModal(false)}>Cerrar</button>
+                <div className="modal apis-modal">
+                    <div className="modal-content apis-modal-content">
+                        <div className="apis-modal-header">
+                            <h2 className="apis-modal-title">
+                                <i className="fa-solid fa-list-check apis-modal-title-icon"></i>
+                                APIs del rol: <span className="apis-modal-title-role">{apisModalRoleName}</span>
+                            </h2>
+                            <button 
+                                className="apis-modal-close-btn"
+                                onClick={() => setShowApisModal(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        
+                        <div className="apis-modal-body">
+                            <table className="apis-table">
+                                <thead>
+                                    <tr>
+                                        <th className="endpoint-header">
+                                            <i className="fa-solid fa-link th-icon endpoint"></i>
+                                            Endpoint
+                                        </th>
+                                        <th className="description-header">
+                                            <i className="fa-solid fa-info-circle th-icon description"></i>
+                                            Descripción
+                                        </th>
+                                        <th className="status-header">
+                                            <i className="fa-solid fa-check-circle th-icon status"></i>
+                                            Estado
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {apisModalList
+                                        .sort((a, b) => a.endpoint.localeCompare(b.endpoint))
+                                        .map((api) => (
+                                            <tr key={api.id}>
+                                                <td className="endpoint-cell">
+                                                    {api.endpoint}
+                                                </td>
+                                                <td className="description-cell">
+                                                    {api.description || (
+                                                        <span className="no-description">
+                                                            Sin descripción
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="status-cell">
+                                                    <span className="apis-status-badge">
+                                                        <i className="fa-solid fa-check apis-status-badge-icon"></i>
+                                                        Activa
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div className="apis-modal-footer">
+                            <button 
+                                className="cancel-button apis-modal-close-button" 
+                                onClick={() => setShowApisModal(false)}
+                            >
+                                <i className="fa-solid fa-times apis-modal-close-button-icon"></i>
+                                Cerrar
+                            </button>
                         </div>
                     </div>
                 </div>

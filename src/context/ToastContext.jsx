@@ -5,16 +5,9 @@ const ToastContext = createContext();
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
-  const showToast = useCallback((message, type = 'info', duration = 3000) => {
-    const id = Date.now() + Math.random();
-    const newToast = { id, message, type, duration };
-    
-    setToasts(prev => [...prev, newToast]);
-    
-    // Auto-remove toast after duration
-    setTimeout(() => {
-      removeToast(id);
-    }, duration);
+  const addToast = useCallback((message, type = 'info', duration = 5000) => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type, duration }]);
   }, []);
 
   const removeToast = useCallback((id) => {
@@ -22,24 +15,24 @@ export const ToastProvider = ({ children }) => {
   }, []);
 
   const showSuccess = useCallback((message, duration) => {
-    showToast(message, 'success', duration);
-  }, [showToast]);
+    addToast(message, 'success', duration);
+  }, [addToast]);
 
   const showError = useCallback((message, duration) => {
-    showToast(message, 'error', duration);
-  }, [showToast]);
+    addToast(message, 'error', duration);
+  }, [addToast]);
 
   const showWarning = useCallback((message, duration) => {
-    showToast(message, 'warning', duration);
-  }, [showToast]);
+    addToast(message, 'warning', duration);
+  }, [addToast]);
 
   const showInfo = useCallback((message, duration) => {
-    showToast(message, 'info', duration);
-  }, [showToast]);
+    addToast(message, 'info', duration);
+  }, [addToast]);
 
   const value = {
     toasts,
-    showToast,
+    showToast: addToast,
     showSuccess,
     showError,
     showWarning,

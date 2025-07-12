@@ -7,13 +7,13 @@ import './Users.css';
 
 const AdminApis = () => {
     const [apis, setApis] = useState([]);
-    const [filteredApis, setFilteredApis] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedApi, setSelectedApi] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [filteredApis, setFilteredApis] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [_error, setError] = useState(null);
     const [apiData, setApiData] = useState({
         endpoint: '',
         description: '',
@@ -288,7 +288,7 @@ const AdminApis = () => {
             } else {
                 alert('No hay endpoints faltantes. Todo está sincronizado.');
             }
-        } catch (err) {
+        } catch {
             alert('Error al sincronizar APIs');
         } finally {
             setSyncLoading(false);
@@ -318,9 +318,9 @@ const AdminApis = () => {
                 setSyncMissing([]);
                 setSyncSelected([]);
                 setSyncSuccess("");
-                fetchApis();
+                window.location.reload();
             }, 1500);
-        } catch (err) {
+        } catch {
             alert('Error al agregar APIs');
         } finally {
             setSyncLoading(false);
@@ -331,7 +331,7 @@ const AdminApis = () => {
     function groupAndSortApis(apis) {
         const groups = {};
         apis.forEach(api => {
-            const match = (api.endpoint || '').match(/^\/([^\/]+)/);
+            const match = (api.endpoint || '').match(/^\/([^/]+)/);
             const category = match ? match[1] : 'otros';
             if (!groups[category]) groups[category] = [];
             groups[category].push(api);

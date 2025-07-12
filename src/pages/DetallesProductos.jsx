@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link, useParams, useNavigate } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import Header from "../components/estaticos/Header"
 import Footer from "../components/estaticos/Footer"
 import loading from '../assets/loading.gif'
@@ -19,7 +19,6 @@ function getRandomRating() {
 
 const DetallesProductos = ({ agregarProductoCarrito }) => {
     const { id } = useParams();
-    const navigate = useNavigate();
     const [producto, setProducto] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);

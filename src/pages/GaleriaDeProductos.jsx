@@ -18,7 +18,7 @@ const GaleriaDeProductos = () => {
   try {
     const realTimeContext = useRealTime();
     lastUpdate = realTimeContext.lastUpdate;
-  } catch (error) {
+  } catch {
     // Si no está disponible, no mostrar notificación
   }
 

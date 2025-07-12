@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth';
+import { createOrder } from '../utils/orderService';
 import Header from '../components/estaticos/Header';
 import Footer from '../components/estaticos/Footer';
-import { API_BASE_URL } from '../utils/apiConfig';
-import loading from '../assets/loading.gif';
 import './Checkout.css';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, getTotalPrice, createOrder, clearCart } = useCart();
+  const { items, getTotalPrice, clearCart } = useCart();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderData, setOrderData] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentStep, setPaymentStep] = useState('processing'); // processing, success, failed
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -24,7 +25,7 @@ const Checkout = () => {
     address: '',
     city: '',
     postalCode: '',
-    paymentMethod: 'cash'
+    paymentMethod: 'mercadopago'
   });
 
   useEffect(() => {
@@ -46,14 +47,54 @@ const Checkout = () => {
     setError(null);
 
     try {
-      // Crear el pedido usando el contexto del carrito
-      const order = await createOrder({
-        id: user?.id || user?.ID,
-        ...formData
-      });
+      // Si es Mercado Pago, simular el proceso de pago
+      if (formData.paymentMethod === 'mercadopago') {
+        setShowPaymentModal(true);
+        setPaymentStep('processing');
+        
+        // Simular procesamiento de pago
+        setTimeout(() => {
+          setPaymentStep('success');
+          
+          // Después del pago exitoso, crear el pedido
+          setTimeout(async () => {
+            try {
+              const orderData = {
+                items: items.map(item => ({
+                  product_id: item.id,
+                  quantity: item.quantity
+                }))
+              };
 
+              const order = await createOrder(orderData);
+              setOrderData(order);
+              setOrderSuccess(true);
+              clearCart();
+              setShowPaymentModal(false);
+            } catch (err) {
+              setError(err.message);
+              setShowPaymentModal(false);
+            } finally {
+              setLoading(false);
+            }
+          }, 2000);
+        }, 3000);
+        
+        return;
+      }
+
+      // Para otros métodos de pago, crear el pedido directamente
+      const orderData = {
+        items: items.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity
+        }))
+      };
+
+      const order = await createOrder(orderData);
       setOrderData(order);
       setOrderSuccess(true);
+      clearCart();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -159,6 +200,7 @@ const Checkout = () => {
                       onChange={handleInputChange}
                       required
                     >
+                      <option value="mercadopago">Mercado Pago</option>
                       <option value="cash">Efectivo</option>
                       <option value="card">Tarjeta</option>
                       <option value="transfer">Transferencia</option>
@@ -271,6 +313,38 @@ const Checkout = () => {
           </div>
         </div>
       </main>
+      
+      {/* Mercado Pago Payment Modal */}
+      {showPaymentModal && (
+        <div className="payment-modal-overlay">
+          <div className="payment-modal">
+            <div className="payment-modal-header">
+              <img src="/img/mp.png" alt="Mercado Pago" className="mp-logo" />
+              <h3>Procesando pago con Mercado Pago</h3>
+            </div>
+            
+            <div className="payment-modal-content">
+              {paymentStep === 'processing' && (
+                <div className="payment-processing">
+                  <div className="spinner"></div>
+                  <p>Procesando tu pago...</p>
+                  <p className="payment-amount">Total: ${getTotalPrice().toLocaleString()}</p>
+                </div>
+              )}
+              
+              {paymentStep === 'success' && (
+                <div className="payment-success">
+                  <i className="fa-solid fa-check-circle"></i>
+                  <h4>¡Pago exitoso!</h4>
+                  <p>Tu pago ha sido procesado correctamente.</p>
+                  <p>Creando tu pedido...</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </>
   );

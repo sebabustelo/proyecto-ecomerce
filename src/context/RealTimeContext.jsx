@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { API_BASE_URL } from '../utils/apiConfig';
 
 const RealTimeContext = createContext();
@@ -14,9 +14,10 @@ export const useRealTime = () => {
 export const RealTimeProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [lastUpdate, setLastUpdate] = useState(null);
-    const [isPolling, setIsPolling] = useState(false);
     const [error, setError] = useState(null);
     const [pollingInterval, setPollingInterval] = useState(null);
+
+    const POLLING_INTERVAL = 10000; // 10 segundos por defecto
 
     // Función para obtener productos
     const fetchProducts = async () => {
@@ -41,37 +42,34 @@ export const RealTimeProvider = ({ children }) => {
     };
 
     // Función para iniciar polling
-    const startPolling = (interval = 10000) => { // 10 segundos por defecto
-        console.log('RealTimeContext: Iniciando polling con intervalo:', interval);
-        
-        // Limpiar intervalo anterior si existe
+    const startPolling = useCallback(() => {
         if (pollingInterval) {
             clearInterval(pollingInterval);
         }
-
-        setIsPolling(true);
-        
-        // Cargar productos inmediatamente
-        fetchProducts();
-        
-        // Configurar intervalo
-        const intervalId = setInterval(async () => {
-            console.log('RealTimeContext: Polling automático...');
-            await fetchProducts();
-        }, interval);
-        
-        setPollingInterval(intervalId);
-    };
+        console.log('RealTimeContext: Iniciando polling');
+        const interval = setInterval(async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setProducts(data);
+                    setLastUpdate(new Date());
+                }
+            } catch (error) {
+                console.error('Error polling products:', error);
+            }
+        }, POLLING_INTERVAL);
+        setPollingInterval(interval);
+    }, [pollingInterval]);
 
     // Función para detener polling
-    const stopPolling = () => {
-        console.log('RealTimeContext: Deteniendo polling');
-        setIsPolling(false);
+    const stopPolling = useCallback(() => {
         if (pollingInterval) {
             clearInterval(pollingInterval);
             setPollingInterval(null);
+            console.log('RealTimeContext: Deteniendo polling');
         }
-    };
+    }, [pollingInterval]);
 
     // Función para forzar actualización
     const forceUpdate = async () => {
@@ -83,21 +81,17 @@ export const RealTimeProvider = ({ children }) => {
 
     // Iniciar polling automáticamente cuando se monta el componente
     useEffect(() => {
-        if (!ENABLE_POLLING) return;
-        console.log('RealTimeContext: Montando provider');
-        startPolling();
-
-        // Limpiar al desmontar
-        return () => {
-            console.log('RealTimeContext: Desmontando provider');
+        if (ENABLE_POLLING) {
+            startPolling();
+        } else {
             stopPolling();
-        };
-    }, []);
+        }
+    }, [ENABLE_POLLING, startPolling, stopPolling]);
 
     const value = {
         products,
         lastUpdate,
-        isPolling,
+        loading: false, // Assuming loading is not directly managed here, but can be added if needed
         error,
         fetchProducts,
         startPolling,

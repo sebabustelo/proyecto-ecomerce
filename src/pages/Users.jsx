@@ -1,13 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { UserContext } from '../context/UserContext';
-import { useUsers } from '../context/UsersContext';
+import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
 import './Users.css';
 import loading_img from '../assets/loading.gif'
+import { useUsers } from '../context/UsersContext';
 
-const Users = ({ cargando }) => {
-    const [selectedUser, setSelectedUser] = useState(null);
+const Users = () => {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,8 +17,7 @@ const Users = ({ cargando }) => {
         role: 'user',
     });
 
-    const { user, isAuthenticated, error: authError, logout } = useContext(UserContext);
-    const { users, loading, error: usersError, deleteUser } = useUsers();
+    const { users, loading, deleteUser } = useUsers();
 
     // Función para filtrar usuarios
     useEffect(() => {
@@ -122,7 +119,6 @@ const Users = ({ cargando }) => {
                                                         <button
                                                             className="action-button edit-button icon-button"
                                                             onClick={() => {
-                                                                setSelectedUser(user);
                                                                 setUserData({
                                                                     name: user.name || user.Name || '',
                                                                     email: user.email || user.Email || '',

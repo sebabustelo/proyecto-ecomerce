@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './styleProductos.css'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../hooks/useCart'
 import { ProductContext } from '../context/ProductContext'
 import { useToast } from '../context/ToastContext'
 import loadingGif from '../assets/loading.gif';
@@ -11,7 +11,7 @@ const Producto = ({ producto, detalleProducto, setShowLoading }) => {
     const { nombre, precio, imagen } = producto;
     const [cantidad, setCantidad] = useState(1);
     const { addToCart } = useCart();
-    const { actualizarStock, productoDisponible } = useContext(ProductContext);
+    const { productoDisponible } = useContext(ProductContext);
     const { showWarning, showError } = useToast();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

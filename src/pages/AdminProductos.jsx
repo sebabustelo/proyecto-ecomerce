@@ -9,13 +9,13 @@ import './Users.css';
 const AdminProductos = () => {
     const { products: realTimeProducts, lastUpdate, isPolling, forceUpdate } = useRealTime();
     const [productos, setProductos] = useState([]);
-    const [filteredProductos, setFilteredProductos] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [filteredProductos, setFilteredProductos] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [_error, setError] = useState(null);
     const [productData, setProductData] = useState({
         name: '',
         description: '',
@@ -89,7 +89,7 @@ const AdminProductos = () => {
                             { id: 2, name: 'Funda' }
                         ]);
                     }
-                } catch (err) {
+                } catch {
                     console.log('No se pudieron cargar las categorías, usando valores por defecto');
                     setCategories([
                         { id: 1, name: 'Cucha' },
@@ -106,7 +106,7 @@ const AdminProductos = () => {
                         const data = await res.json();
                         setProductos(data);
                         setFilteredProductos(data);
-                    } catch (err) {
+                    } catch {
                         setError('No se pudieron cargar los productos');
                     } finally {
                         setLoading(false);
@@ -124,7 +124,7 @@ const AdminProductos = () => {
 
     // Usar productos del contexto de tiempo real
     useEffect(() => {
-        if (realTimeProducts.length > 0) {
+        if (realTimeProducts && realTimeProducts.length > 0) {
             setProductos(realTimeProducts);
             setFilteredProductos(realTimeProducts);
         }

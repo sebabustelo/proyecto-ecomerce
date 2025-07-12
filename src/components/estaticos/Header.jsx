@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styleEstatico.css';
-import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useCart } from '../../hooks/useCart';
 import Cart from '../Cart';
 
 const Header = () => {
@@ -11,7 +11,7 @@ const Header = () => {
     const [isCartOpen, setIsCartOpen] = useState(false);
 
     const { user, logout } = useAuth();
-    const { clearCart, getTotalItems } = useCart();
+    const { getTotalItems } = useCart();
     const navigate = useNavigate();
 
     const handleToggle = () => setOpen(!open);
@@ -103,7 +103,9 @@ const Header = () => {
                                 </Link>
                             </li>
                         )}
-                        <li className="nav-item">
+
+                        {/* Menú de usuario para desktop */}
+                        <li className="nav-item desktop-user-menu">
                             <Link to="#" className='nav-link' onClick={toggleUserMenu}>
                                 <i className="fa-solid fa-user-circle"></i>
                                 {user && (
@@ -116,7 +118,6 @@ const Header = () => {
                                 <div className="user-dropdown">
                                     {user ? (
                                         <Link to="/" className="dropdown-item" onClick={() => {
-                                            //clearCart(); 
                                             logout();
                                             setUserMenuOpen(false);
                                             navigate('/');
@@ -136,6 +137,32 @@ const Header = () => {
                                 </div>
                             )}
                         </li>
+
+                        {/* Menú de usuario para móvil */}
+                        {user ? (
+                            <li className="nav-item mobile-user-menu">
+                                <Link to="/" className='nav-link' onClick={() => {
+                                    logout();
+                                    handleClose();
+                                    navigate('/');
+                                }}>
+                                    <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                                </Link>
+                            </li>
+                        ) : (
+                            <>
+                                <li className="nav-item mobile-user-menu">
+                                    <Link to="/login" className='nav-link' onClick={handleClose}>
+                                        <i className="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                                    </Link>
+                                </li>
+                                <li className="nav-item mobile-user-menu">
+                                    <Link to="/registrarse" className='nav-link' onClick={handleClose}>
+                                        <i className="fa-solid fa-user-plus"></i> Registrarse
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </nav>
             </header>

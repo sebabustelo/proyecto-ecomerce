@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { ProductContext } from './ProductContext';
 import { AuthContext } from './AuthContext';
 import * as cartService from '../utils/cartService';
+import { getInitialCartState } from '../utils/cartUtils';
 import { isAuthenticated } from '../utils/authUtils';
 
 export const CartContext = createContext();
@@ -13,7 +14,7 @@ const cartReducer = (state, action) => {
         ...state,
         items: action.payload || []
       };
-    case 'ADD_TO_CART':
+    case 'ADD_TO_CART': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
       if (existingItem) {
         return {
@@ -30,6 +31,7 @@ const cartReducer = (state, action) => {
           items: [...state.items, { ...action.payload, quantity: action.payload.quantity || 1 }]
         };
       }
+    }
     case 'REMOVE_FROM_CART':
       return {
         ...state,
@@ -59,20 +61,8 @@ const cartReducer = (state, action) => {
   }
 };
 
-// Función para obtener el estado inicial desde localStorage (fallback)
-const getInitialState = () => {
-  try {
-    const savedCart = localStorage.getItem('cart');    
-    if (savedCart) {
-      const parsedCart = JSON.parse(savedCart);      
-      return { items: parsedCart };
-    }
-  } catch (error) {
-    console.error('Error loading cart from localStorage:', error);
-  }
-  console.log('No saved cart found, starting with empty cart');
-  return { items: [] };
-};
+// Usar la función importada
+const getInitialState = getInitialCartState;
 
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, getInitialState());

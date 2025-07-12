@@ -192,13 +192,7 @@ h1 {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .hero-section {
-        padding: 1.5rem;
-    }
-    
-    .main-title {
-        font-size: 1.8rem;
-    }
+  
     
     .features-grid {
         grid-template-columns: 1fr 1fr;

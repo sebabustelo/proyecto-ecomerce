@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styleEstatico.css';
-import Cart from '../Cart';
 import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
 
 const Header = () => {
-    const [isCartOpen, setCartOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
-    const { clearCart } = useCart();
     const navigate = useNavigate();
 
     const handleToggle = () => setOpen(!open);

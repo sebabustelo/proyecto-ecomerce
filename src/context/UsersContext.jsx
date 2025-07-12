@@ -1,5 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { API_BASE_URL } from '../utils/apiConfig';
 
 const UsersContext = createContext();
@@ -14,60 +13,38 @@ export const useUsers = () => {
 
 export const UsersProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const location = useLocation();
 
-    const fetchUsers = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            // Don't set error for public pages
-            if (location.pathname === '/users' || location.pathname === '/admin') {
-                setError('No authentication token found');
-            }
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
+    const fetchUsers = useCallback(async () => {
         try {
-            const cleanToken = token.trim();
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('No hay token de autenticación');
+                return;
+            }
 
-            const response = await fetch(`${API_BASE_URL}/users/index`, {
-                method: 'GET',
+            const response = await fetch(`${API_BASE_URL}/users`, {
                 headers: {
-                    'Authorization': `Bearer ${cleanToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (!response.ok) {                
-                const errorText = await response.text();            
-                if (response.status === 401 || response.status === 403) {
-                    setError(`Error : ${errorText}`);
-                    localStorage.removeItem('token');
-                    window.location.href = '/login';
-                    return;
-                }
-                
-                
-                
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
 
-            const data = await response.json();            
-            setUsers(data.data || []);
-        } catch (err) {
-            setError(err.message);
-            console.error('Error fetching users:', err);
-            if (err.message.includes('token no es válido')) {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
-            }
+            const data = await response.json();
+            setUsers(data);
+            setError(null);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            setError(error.message);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const deleteUser = async (userId) => {
         const token = localStorage.getItem('token');
@@ -107,10 +84,8 @@ export const UsersProvider = ({ children }) => {
 
     // Only fetch users when on the users or admin page
     useEffect(() => {
-        if (location.pathname === '/users' || location.pathname === '/admin') {
-            fetchUsers();
-        }
-    }, [location.pathname]);
+        fetchUsers();
+    }, [fetchUsers]);
 
     const value = {
         users,

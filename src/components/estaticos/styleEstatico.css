@@ -98,6 +98,25 @@
     width: auto;
 }
 
+/* Menús de usuario para desktop y móvil */
+.desktop-user-menu {
+    display: block;
+}
+
+.mobile-user-menu {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .desktop-user-menu {
+        display: none;
+    }
+    
+    .mobile-user-menu {
+        display: block;
+    }
+}
+
 .nav-item::after {
     content: '';
     position: absolute;
@@ -128,6 +147,38 @@
     
     .nav-link i {
         font-size: 0.9rem;
+    }
+}
+
+/* Media query específica para tablets y pantallas medianas */
+@media (min-width: 769px) and (max-width: 920px) {
+    .nav-list {
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-link {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.85rem;
+        gap: 0.3rem;
+        min-width: auto;
+        white-space: nowrap;
+    }
+    
+    .nav-link i {
+        font-size: 0.9rem;
+    }
+    
+    /* Asegurar que el logo no se superponga */
+    .logo-img {
+        max-width: 120px;
+        height: auto;
+    }
+    
+    /* Ajustar el contenedor del nav */
+    .nav {
+        padding: 0 0.5rem;
     }
 }
 

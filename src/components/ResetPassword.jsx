@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import './styleLogin.css';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,7 +7,6 @@ const ResetPassword = () => {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
-    const navigate = useNavigate();
     const { resetPassword, error, setError } = useAuth();
 
     const handleSubmit = async (e) => {
