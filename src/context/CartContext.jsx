@@ -41,7 +41,7 @@ const cartReducer = (state, action) => {
       return {
         ...state,
         items: state.items.map(item =>
-          item.id === action.payload.id
+          (item.id === action.payload.id || item.backend_id === action.payload.id)
             ? { ...item, quantity: action.payload.quantity }
             : item
         )
@@ -125,10 +125,16 @@ export const CartProvider = ({ children }) => {
     if (!isAuthenticated()) {
       dispatch({
         type: 'ADD_TO_CART',
-        payload: { ...product, quantity }
+        payload: {
+          id: product.id,
+          nombre: product.nombre || product.name,
+          precio: product.precio || product.price,
+          imagen: product.imagen || product.image || product.product_image,
+          quantity
+        }
       });
       actualizarStock(product.id, quantity);
-      return;
+      return { notAuthenticated: true };
     }
 
     try {
@@ -137,19 +143,29 @@ export const CartProvider = ({ children }) => {
       if (cart && cart.cart_items) {
         const items = cart.cart_items.map(item => ({
           id: item.product.id,
-          nombre: item.product.nombre,
-          precio: item.product.precio,
-          imagen: item.product.imagen,
+          nombre: item.product.nombre || item.product.name,
+          precio: item.product.precio || item.product.price,
+          imagen: item.product.imagen || item.product.image || item.product.product_image,
           quantity: item.quantity,
           price: item.price,
           backend_id: item.id
         }));
         dispatch({ type: 'SET_CART', payload: items });
+        // Siempre recarga el carrito completo después de agregar
+        if (isAuthenticated()) {
+          await fetchCart();
+        }
       } else {
         // Fallback al estado local
         dispatch({
           type: 'ADD_TO_CART',
-          payload: { ...product, quantity }
+          payload: {
+            id: product.id,
+            nombre: product.nombre || product.name,
+            precio: product.precio || product.price,
+            imagen: product.imagen || product.image || product.product_image,
+            quantity
+          }
         });
         actualizarStock(product.id, quantity);
       }
@@ -158,7 +174,13 @@ export const CartProvider = ({ children }) => {
       // Fallback al estado local
       dispatch({
         type: 'ADD_TO_CART',
-        payload: { ...product, quantity }
+        payload: {
+          id: product.id,
+          nombre: product.nombre || product.name,
+          precio: product.precio || product.price,
+          imagen: product.imagen || product.image || product.product_image,
+          quantity
+        }
       });
       actualizarStock(product.id, quantity);
     }
@@ -180,28 +202,32 @@ export const CartProvider = ({ children }) => {
 
     try {
       // Encontrar el item en el carrito para obtener su ID del backend
-      const item = state.items.find(i => i.id === productId);
+      const item = state.items.find(i => i.id === productId || i.backend_id === productId);
       if (item && item.backend_id) {
         const cart = await cartService.removeFromCart(item.backend_id);
-        if (cart && cart.cart_items) {
+        // Log de la respuesta del backend
+        console.log('Respuesta al eliminar del carrito:', cart);
+        if (cart && Array.isArray(cart.cart_items)) {
           const items = cart.cart_items.map(item => ({
             id: item.product.id,
-            nombre: item.product.nombre,
-            precio: item.product.precio,
-            imagen: item.product.imagen,
+            nombre: item.product.nombre || item.product.name,
+            precio: item.product.precio || item.product.price,
+            imagen: item.product.imagen || item.product.image || item.product.product_image,
             quantity: item.quantity,
             price: item.price,
             backend_id: item.id
           }));
           dispatch({ type: 'SET_CART', payload: items });
+        } else if (cart && cart.cart_items === undefined) {
+          // No limpiar el carrito, solo loguear el error
+          console.warn('El backend no devolvió cart_items, se mantiene el carrito actual.');
         } else {
-          dispatch({
-            type: 'REMOVE_FROM_CART',
-            payload: productId
-          });
-          if (item) {
-            restaurarStock(productId, item.quantity);
-          }
+          // Solo limpiar si realmente no hay items
+          dispatch({ type: 'CLEAR_CART' });
+        }
+        // Siempre recarga el carrito completo después de eliminar
+        if (isAuthenticated()) {
+          await fetchCart();
         }
       } else {
         // Fallback al estado local
@@ -227,31 +253,30 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const updateQuantity = async (productId, newQuantity) => {
+  const updateQuantity = async (itemKey, newQuantity) => {
+    // Si está autenticado y hay backend_id, usa backend_id
+    const item = state.items.find(i => i.backend_id === itemKey || i.id === itemKey);
+    if (!item) return;
+
     // Si no está autenticado, usar solo localStorage
     if (!isAuthenticated()) {
-      const item = state.items.find(i => i.id === productId);
-      if (!item) return;
-
       const diff = newQuantity - item.quantity;
       if (diff > 0) {
-        actualizarStock(productId, diff);
+        actualizarStock(itemKey, diff);
       } else if (diff < 0) {
-        restaurarStock(productId, -diff);
+        restaurarStock(itemKey, -diff);
       }
       dispatch({
         type: 'UPDATE_QUANTITY',
-        payload: { id: productId, quantity: newQuantity }
+        payload: { id: itemKey, quantity: newQuantity }
       });
       return;
     }
 
     try {
-      const item = state.items.find(i => i.id === productId);
-      if (!item) return;
-
       if (item.backend_id) {
         const cart = await cartService.updateCartItem(item.backend_id, newQuantity);
+        console.log('Respuesta del backend al actualizar cantidad:', cart);
         if (cart && cart.cart_items) {
           const items = cart.cart_items.map(item => ({
             id: item.product.id,
@@ -267,42 +292,42 @@ export const CartProvider = ({ children }) => {
           // Fallback al estado local
           const diff = newQuantity - item.quantity;
           if (diff > 0) {
-            actualizarStock(productId, diff);
+            actualizarStock(itemKey, diff);
           } else if (diff < 0) {
-            restaurarStock(productId, -diff);
+            restaurarStock(itemKey, -diff);
           }
           dispatch({
             type: 'UPDATE_QUANTITY',
-            payload: { id: productId, quantity: newQuantity }
+            payload: { id: itemKey, quantity: newQuantity }
           });
         }
       } else {
         // Fallback al estado local
         const diff = newQuantity - item.quantity;
         if (diff > 0) {
-          actualizarStock(productId, diff);
+          actualizarStock(itemKey, diff);
         } else if (diff < 0) {
-          restaurarStock(productId, -diff);
+          restaurarStock(itemKey, -diff);
         }
         dispatch({
           type: 'UPDATE_QUANTITY',
-          payload: { id: productId, quantity: newQuantity }
+          payload: { id: itemKey, quantity: newQuantity }
         });
       }
     } catch (error) {
       console.error('Error al actualizar cantidad:', error);
       // Fallback al estado local
-      const item = state.items.find(i => i.id === productId);
+      const item = state.items.find(i => i.id === itemKey);
       if (item) {
         const diff = newQuantity - item.quantity;
         if (diff > 0) {
-          actualizarStock(productId, diff);
+          actualizarStock(itemKey, diff);
         } else if (diff < 0) {
-          restaurarStock(productId, -diff);
+          restaurarStock(itemKey, -diff);
         }
         dispatch({
           type: 'UPDATE_QUANTITY',
-          payload: { id: productId, quantity: newQuantity }
+          payload: { id: itemKey, quantity: newQuantity }
         });
       }
     }
@@ -343,7 +368,7 @@ export const CartProvider = ({ children }) => {
   const createOrder = () => {
     const order = {
       items: state.items.map(item => ({
-        product_id: item.id,
+        product_id: parseInt(item.id) || Number(item.id),
         quantity: item.quantity,
         price: item.precio || item.price,
         name: item.nombre || item.name,

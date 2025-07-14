@@ -56,7 +56,7 @@ const Producto = ({ producto, detalleProducto, setShowLoading }) => {
    
     return (
         <section className='card'>
-            <div className='imagenContainer'>
+            <div className='imgContainer'>
                 <Link to={`/productos/${producto.id}`}>
                     <img src={imagen} alt={nombre} className='imagen' style={{ cursor: 'pointer' }} />
                 </Link>

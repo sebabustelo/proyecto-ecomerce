@@ -117,13 +117,17 @@ const Header = () => {
                             {isUserMenuOpen && (
                                 <div className="user-dropdown">
                                     {user ? (
-                                        <Link to="/" className="dropdown-item" onClick={() => {
-                                            logout();
-                                            setUserMenuOpen(false);
-                                            navigate('/');
-                                        }}>
-                                            <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
-                                        </Link>
+                                        <>
+                                            <Link to="/mis-pedidos" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                                <i className="fa-solid fa-shopping-bag"></i> Mis Pedidos
+                                            </Link>
+                                            <Link to="/" className="dropdown-item" onClick={() => {
+                                                logout();
+                                                setUserMenuOpen(false);
+                                            }}>
+                                                <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                                            </Link>
+                                        </>
                                     ) : (
                                         <>
                                             <Link to="/login" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
@@ -140,15 +144,21 @@ const Header = () => {
 
                         {/* Menú de usuario para móvil */}
                         {user ? (
-                            <li className="nav-item mobile-user-menu">
-                                <Link to="/" className='nav-link' onClick={() => {
-                                    logout();
-                                    handleClose();
-                                    navigate('/');
-                                }}>
-                                    <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
-                                </Link>
-                            </li>
+                            <>
+                                <li className="nav-item mobile-user-menu">
+                                    <Link to="/mis-pedidos" className='nav-link' onClick={handleClose}>
+                                        <i className="fa-solid fa-shopping-bag"></i> Mis Pedidos
+                                    </Link>
+                                </li>
+                                <li className="nav-item mobile-user-menu">
+                                    <Link to="/" className='nav-link' onClick={() => {
+                                        logout();
+                                        handleClose();
+                                    }}>
+                                        <i className="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                                    </Link>
+                                </li>
+                            </>
                         ) : (
                             <>
                                 <li className="nav-item mobile-user-menu">

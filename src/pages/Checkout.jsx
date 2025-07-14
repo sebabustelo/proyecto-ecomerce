@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
-import { createOrder } from '../utils/orderService';
+import { createOrder, updatePaymentStatus } from '../utils/orderService';
 import Header from '../components/estaticos/Header';
 import Footer from '../components/estaticos/Footer';
 import './Checkout.css';
@@ -61,13 +61,30 @@ const Checkout = () => {
             try {
               const orderData = {
                 items: items.map(item => ({
-                  product_id: item.id,
+                  product_id: parseInt(item.id) || Number(item.id),
                   quantity: item.quantity
-                }))
+                })),
+                payment: {
+                  payment_method: formData.paymentMethod,
+                  amount: getTotalPrice()
+                },
+                shipping: {
+                  recipient_name: formData.name,
+                  recipient_email: formData.email,
+                  recipient_phone: formData.phone,
+                  shipping_address: formData.address,
+                  shipping_city: formData.city,
+                  shipping_postal_code: formData.postalCode || "",
+                  shipping_province: "",
+                  shipping_method: "standard"
+                },
+                notes: ""
               };
 
               const order = await createOrder(orderData);
               setOrderData(order);
+              // Actualizar estado de pago a 'completed' después de crear el pedido
+              await updatePaymentStatus(order.id, 'completed');
               setOrderSuccess(true);
               clearCart();
               setShowPaymentModal(false);
@@ -86,13 +103,30 @@ const Checkout = () => {
       // Para otros métodos de pago, crear el pedido directamente
       const orderData = {
         items: items.map(item => ({
-          product_id: item.id,
+          product_id: parseInt(item.id) || Number(item.id),
           quantity: item.quantity
-        }))
+        })),
+        payment: {
+          payment_method: formData.paymentMethod,
+          amount: getTotalPrice()
+        },
+        shipping: {
+          recipient_name: formData.name,
+          recipient_email: formData.email,
+          recipient_phone: formData.phone,
+          shipping_address: formData.address,
+          shipping_city: formData.city,
+          shipping_postal_code: formData.postalCode || "",
+          shipping_province: "",
+          shipping_method: "standard"
+        },
+        notes: ""
       };
 
       const order = await createOrder(orderData);
       setOrderData(order);
+      // Actualizar estado de pago a 'completed' después de crear el pedido
+      await updatePaymentStatus(order.id, 'completed');
       setOrderSuccess(true);
       clearCart();
     } catch (err) {

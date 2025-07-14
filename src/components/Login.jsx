@@ -8,18 +8,20 @@ const Login = () => {
     const [form, setForm] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { loginWithEmail, loginWithGoogle, loginWithFacebook, error, setError, user } = useAuth();
+    const { loginWithEmail, loginWithGoogle, loginWithFacebook, error, setError, user, loading } = useAuth();
     const { fetchCart } = useContext(CartContext);
 
     // Navegar automáticamente cuando el usuario se autentica
     useEffect(() => {
-        if (user && !isLoading) {
-            console.log('Usuario autenticado, navegando a /productos');
-            fetchCart().then(() => {
-                navigate("/productos");
-            });
+        if (user && !loading) {
+            // Si el usuario es admin, redirige a /admin
+            if (user.roles && user.roles.includes('admin')) {
+                navigate('/admin', { replace: true });
+            } else {
+                navigate('/productos', { replace: true });
+            }
         }
-    }, [user, navigate, fetchCart, isLoading]);
+    }, [user, loading, navigate]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -73,6 +75,14 @@ const Login = () => {
             setIsLoading(false);
         }
     };
+
+    if (loading) {
+      return (
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <p>Cargando...</p>
+        </div>
+      );
+    }
 
     return (
         <div className="login-card">

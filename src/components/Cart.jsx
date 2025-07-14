@@ -86,9 +86,10 @@ const Cart = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleUpdateQuantity = async (productId, newQuantity) => {
+  const handleUpdateQuantity = async (itemKey, newQuantity) => {
+    console.log('handleUpdateQuantity', { itemKey, newQuantity });
     try {
-      await updateQuantity(productId, newQuantity);
+      await updateQuantity(itemKey, newQuantity);
     } catch (error) {
       console.error('Error al actualizar cantidad:', error);
       alert('Error al actualizar cantidad. Intenta nuevamente.');
@@ -103,12 +104,12 @@ const Cart = ({ isOpen, onClose }) => {
       </div>
       <div className="cart-content">
         <div className="cart-items">
-          {items.map((item) => (
-            <div key={item.id} className="cart-item">
+          {items.map((item, idx) => (
+            <div key={item.backend_id || item.id || item.product_id || idx} className="cart-item">
               <div className="item-image">
                 <img 
-                  src={item.imagen || item.image} 
-                  alt={item.nombre || item.name}
+                  src={item.imagen || item.image || item.product_image} 
+                  alt={item.nombre || item.name || item.product_name}
                 />
               </div>
               <div className="item-details">
@@ -120,7 +121,7 @@ const Cart = ({ isOpen, onClose }) => {
               <div className="item-quantity">
                 <button 
                   className="quantity-btn"
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                  onClick={() => handleUpdateQuantity(item.backend_id || item.id, item.quantity - 1)}
                   disabled={item.quantity <= 1}
                 >
                   -
@@ -128,7 +129,7 @@ const Cart = ({ isOpen, onClose }) => {
                 <span className="quantity">{item.quantity}</span>
                 <button 
                   className="quantity-btn"
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                  onClick={() => handleUpdateQuantity(item.backend_id || item.id, item.quantity + 1)}
                 >
                   +
                 </button>

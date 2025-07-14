@@ -31,80 +31,62 @@ export const AuthProvider = ({ children }) => {
             
             if (firebaseUser) {
                 console.log('Firebase user detected:', firebaseUser.email);
-                
                 // Verificar si es un login reciente usando una bandera en sessionStorage
                 const loginFlag = sessionStorage.getItem('recentLogin');
                 const isRecentLogin = loginFlag === 'true';
-                
-                if (isRecentLogin) {
-                    console.log('Recent login detected, calling API...');
-                    
-                    try {
-                        // Obtener el token del proveedor
-                        const providerToken = await firebaseUser.getIdToken();
-                        console.log('Provider token obtained:', providerToken.substring(0, 50) + '...');
-                        
-                        // Determinar el endpoint según el proveedor
-                        const provider = firebaseUser.providerData[0]?.providerId;
-                        const endpoint = provider === 'google.com' ? 'google-login' : 'facebook-login';
-                        console.log('Using endpoint:', endpoint);
-                        
-                        // Llamar a la API con el token del proveedor
-                        console.log('Calling API with token...', providerToken);
-                        const apiResponse = await fetch(`${API_BASE_URL}/${endpoint}`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                id_token: providerToken
-                            })
-                        });
-
-                        console.log('API response status:', apiResponse.status);
-
-                        if (!apiResponse.ok) {
-                            const errorData = await apiResponse.json();
-                            console.error('API error:', errorData);
-                            setError(errorData.message || `Error en el login con ${provider === 'google.com' ? 'Google' : 'Facebook'}`);
-                            return;
-                        }
-
-                        const apiData = await apiResponse.json();
-                        console.log('API response data:', apiData);
-                        
-                        if (apiData.token) {
-                            localStorage.setItem("token", apiData.token);
-                            setUser(apiData);
-                            console.log('Login successful, user set:', apiData);
-                            // Limpiar la bandera de login reciente
-                            sessionStorage.removeItem('recentLogin');
-                        } else {
-                            setError("Error: No se recibió el token de autenticación del servidor.");
-                            sessionStorage.removeItem('recentLogin');
-                        }
-                    } catch (error) {
-                        console.error('Error calling API:', error);
-                        setError("Error al procesar el login con el proveedor.");
+                // SIEMPRE sincronizar con el backend
+                try {
+                    const providerToken = await firebaseUser.getIdToken();
+                    // Determinar el endpoint según el proveedor
+                    const provider = firebaseUser.providerData[0]?.providerId;
+                    let endpoint = 'firebase-login';
+                    if (provider === 'google.com') endpoint = 'google-login';
+                    if (provider === 'facebook.com') endpoint = 'facebook-login';
+                    const apiResponse = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id_token: providerToken })
+                    });
+                    if (!apiResponse.ok) {
+                        setUser(null);
+                        localStorage.removeItem("token");
+                        sessionStorage.removeItem('recentLogin');
+                        setLoading(false);
+                        return;
+                    }
+                    const apiData = await apiResponse.json();
+                    if (apiData.token) {
+                        localStorage.setItem("token", apiData.token);
+                        setUser(apiData);
+                        console.log('Login successful, user set:', apiData);
+                        sessionStorage.removeItem('recentLogin');
+                    } else {
+                        setUser(null);
+                        localStorage.removeItem("token");
                         sessionStorage.removeItem('recentLogin');
                     }
-                } else {
-                    console.log('Existing user, not calling API');
-                    setUser(firebaseUser);
+                } catch (error) {
+                    setUser(null);
+                    localStorage.removeItem("token");
+                    sessionStorage.removeItem('recentLogin');
                 }
             } else if (localStorage.getItem("token")) {
                 try {
                     const token = localStorage.getItem("token");
                     const decoded = JSON.parse(atob(token.split('.')[1]));
                     setUser(decoded.user); // Asegúrate que decoded.user tiene roles, email, etc.
+                    console.log('User set from decoded token:', decoded.user);
                 } catch {
                     localStorage.removeItem("token");
                     setUser(null);
+                    console.log('User set to null after token decode fail');
                 }
             } else {
                 setUser(null);
+                console.log('User set to null (no token)');
             }
             setLoading(false);
+            console.log('Loading set to false');
         });
 
         return () => unsubscribe();
@@ -157,6 +139,12 @@ export const AuthProvider = ({ children }) => {
         };
 
         checkRedirectResult();
+    }, []);
+
+    useEffect(() => {
+        const handleTokenExpired = () => setUser(null);
+        window.addEventListener('tokenExpired', handleTokenExpired);
+        return () => window.removeEventListener('tokenExpired', handleTokenExpired);
     }, []);
 
     // Login con email y contraseña
@@ -237,6 +225,7 @@ export const AuthProvider = ({ children }) => {
             setLoading(true);
             // Usa popup en vez de redirect
             const googleProvider = new GoogleAuthProvider();
+            googleProvider.setCustomParameters({ prompt: 'select_account' });
             const result = await signInWithPopup(auth, googleProvider);
             // Si llega aquí, el usuario está autenticado en Firebase
             const providerToken = await result.user.getIdToken();
@@ -294,8 +283,11 @@ export const AuthProvider = ({ children }) => {
         try {
             setError(null);
             localStorage.removeItem("token");
+            sessionStorage.removeItem("recentLogin");
             setUser(null);
+            setLoading(false);
             await signOut(auth);
+            window.location.href = '/login';
         } catch (error) {
             const errorMessage = getErrorMessage(error.code);
             setError(errorMessage);

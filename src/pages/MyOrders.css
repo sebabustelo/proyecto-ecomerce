@@ -17,10 +17,7 @@
   padding: 3rem;
 }
 
-.loading-img {
-  width: 50px;
-  height: 50px;
-}
+
 
 .error-container {
   text-align: center;
@@ -85,14 +82,7 @@
   font-size: 0.9rem;
 }
 
-.status-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  color: white;
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-}
+/* Los estilos de status-badge ahora vienen de AdminPedidos.css */
 
 .order-items {
   padding: 1.5rem;
@@ -187,11 +177,22 @@
   margin: 0.5rem 0;
   color: #495057;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .shipping-info strong,
 .payment-info strong {
   color: #333;
+  min-width: 120px;
+}
+
+.shipping-info .status-badge,
+.payment-info .status-badge {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
 }
 
 /* Responsive */

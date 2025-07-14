@@ -14,6 +14,7 @@ import AdminProductos from './pages/AdminProductos'
 import AdminApis from './pages/AdminApis'
 import AdminRoles from './pages/AdminRoles'
 import Checkout from './pages/Checkout'
+import MyOrders from './pages/MyOrders'
 import RutasProtegidas from './auth/RutasProtegidas'
 import { ProductProvider } from './context/ProductContext'
 import { CartProvider } from './context/CartContext'
@@ -51,20 +52,7 @@ function AppRoutes() {
   const { user, loading } = useAuth();
   const { toasts, removeToast } = useToast();
 
-  if (loading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '1.2rem',
-        color: '#1A5632'
-      }}>
-        Cargando...
-      </div>
-    );
-  }
+
 
   return (
     <>
@@ -109,6 +97,11 @@ function AppRoutes() {
         <Route path='/admin/pedidos' element={
           <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
             <AdminPedidos />
+          </RutasProtegidas>
+        } />
+        <Route path='/mis-pedidos' element={
+          <RutasProtegidas isAuthenticated={!!user}>
+            <MyOrders />
           </RutasProtegidas>
         } />
       </Routes>
