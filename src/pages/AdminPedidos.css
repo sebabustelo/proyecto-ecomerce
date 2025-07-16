@@ -1,0 +1,311 @@
+/* Estilos específicos para AdminPedidos */
+
+/* Estilos para la tabla de items en el modal */
+.order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.order-items-table thead tr {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.order-items-table th {
+  padding: 8px 6px;
+  border: none;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.order-items-table th:nth-child(2) {
+  text-align: center;
+}
+
+.order-items-table th:nth-child(3),
+.order-items-table th:nth-child(4) {
+  text-align: right;
+}
+
+.order-items-table td {
+  padding: 8px 6px;
+  border: none;
+  border-bottom: 1px solid #eee;
+}
+
+.order-items-table td:nth-child(2) {
+  text-align: center;
+}
+
+.order-items-table td:nth-child(3),
+.order-items-table td:nth-child(4) {
+  text-align: right;
+  font-weight: 600;
+  color: #28a745;
+}
+
+.order-items-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.order-items-table tbody tr:nth-child(odd) {
+  background-color: #fff;
+}
+
+.order-items-table tbody tr:hover {
+  background-color: #e3f2fd;
+  transition: background-color 0.2s ease;
+}
+
+/* Contenedor para tabla responsive */
+.order-items-container {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Estilos para secciones de información */
+.info-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #007bff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-section p {
+  margin: 0.5rem 0;
+  color: #495057;
+  font-size: 0.85rem;
+}
+
+.info-section p strong {
+  color: #212529;
+  font-weight: 600;
+}
+
+/* Estilos para el estado del pedido */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+}
+
+.status-confirmed {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.status-processing {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.status-shipped {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.status-delivered {
+  background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+}
+
+.status-cancelled {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+/* Estilos para el modal de pedidos */
+.pedido-modal .modal-content {
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.pedido-modal h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid #007bff;
+  padding-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pedido-modal h3 {
+  color: #34495e;
+  margin: 1rem 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-left: 3px solid #007bff;
+  padding-left: 0.75rem;
+}
+
+/* Estilos para los detalles del pedido */
+.pedido-details {
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pedido-details .form-group {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pedido-details label {
+  font-weight: 700;
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pedido-details p {
+  margin: 0;
+  color: #495057;
+  padding: 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Estilos para el selector de estado */
+.status-selector {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.status-selector .form-group {
+  margin-bottom: 1rem;
+}
+
+.status-selector label {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.status-selector select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: white;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-selector select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* Estilos para botones del modal */
+.pedido-modal .modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.pedido-modal .cancel-button {
+  background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.pedido-modal .cancel-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+  .order-items-container {
+    font-size: 0.8rem;
+  }
+  
+  .order-items-table th,
+  .order-items-table td {
+    padding: 8px 6px;
+  }
+  
+  .pedido-modal .modal-content {
+    margin: 1rem;
+    max-width: 95%;
+  }
+  
+  .info-section {
+    padding: 1rem;
+  }
+  
+  .pedido-details {
+    padding: 1rem;
+  }
+  
+  .pedido-modal h2 {
+    font-size: 1.5rem;
+  }
+  
+  .pedido-modal h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .order-items-table {
+    font-size: 0.75rem;
+  }
+  
+  .order-items-table th,
+  .order-items-table td {
+    padding: 6px 4px;
+  }
+  
+  .pedido-modal h2 {
+    font-size: 1.3rem;
+  }
+  
+  .pedido-modal h3 {
+    font-size: 1rem;
+  }
+  
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+} 

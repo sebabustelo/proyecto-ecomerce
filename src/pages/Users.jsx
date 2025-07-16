@@ -10,6 +10,7 @@ const Users = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const [normalizedUsers, setNormalizedUsers] = useState([]); // Nuevo estado para usuarios normalizados
     const [userData, setUserData] = useState({
         name: '',
         email: '',
@@ -19,22 +20,32 @@ const Users = () => {
 
     const { users, loading, deleteUser } = useUsers();
 
-    // Función para filtrar usuarios
+    // Normaliza los usuarios cuando cambian
     useEffect(() => {
         if (Array.isArray(users)) {
-            const filtered = users.filter(user => {
-                const searchTermLower = searchTerm.toLowerCase();
-                return (
-                    (user.email || user.Email || '').toLowerCase().includes(searchTermLower) ||
-                    (user.name || user.Name || '').toLowerCase().includes(searchTermLower) ||
-                    (user.roles && user.roles.some(role =>
-                        (role.name || '').toLowerCase().includes(searchTermLower)
-                    ))
-                );
-            });
-            setFilteredUsers(filtered);
+            const normalized = users.map(user => ({
+                id: user.id || user.ID,
+                name: user.name || user.Name || '',
+                email: user.email || user.Email || '',
+                roles: (user.roles || user.Roles || []).map(role => ({
+                    id: role.id || role.ID,
+                    name: role.name || role.Name || '',
+                })),
+            }));
+            setNormalizedUsers(normalized);
         }
-    }, [searchTerm, users]);
+    }, [users]);
+
+    // Filtra los usuarios normalizados según el searchTerm
+    useEffect(() => {
+        const searchTermLower = searchTerm.toLowerCase();
+        const filtered = normalizedUsers.filter(user =>
+            user.email.toLowerCase().includes(searchTermLower) ||
+            user.name.toLowerCase().includes(searchTermLower) ||
+            user.roles.some(role => role.name.toLowerCase().includes(searchTermLower))
+        );
+        setFilteredUsers(filtered);
+    }, [searchTerm, normalizedUsers]);
 
     const handleDelete = async (userId) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
@@ -102,13 +113,13 @@ const Users = () => {
                                 <tbody>
                                     {Array.isArray(filteredUsers) && filteredUsers.length > 0 ? (
                                         filteredUsers.map((user) => (
-                                            <tr key={user.id || user.ID}>
+                                            <tr key={user.id}>
                                                 <td>{user.email || user.Email}</td>
                                                 <td>{user.name || user.Name || user.email || user.Email}</td>
                                                 <td>
                                                     {user.roles ? user.roles.map(role => {
                                                         return (
-                                                            <span key={role.ID} className="role-badge">
+                                                            <span key={role.id} className="role-badge">
                                                                 {role.name}
                                                             </span>
                                                         );

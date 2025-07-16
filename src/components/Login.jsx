@@ -135,15 +135,7 @@ const Login = () => {
                     <i className="fa-brands fa-google"></i>
                     {isLoading ? "Redirigiendo..." : "Ingresar con Google"}
                 </button>
-                <button 
-                    onClick={handleFacebookLogin} 
-                    className="login-btn facebook" 
-                    type="button"
-                    disabled={isLoading}
-                >
-                    <i className="fa-brands fa-facebook-f"></i>
-                    {isLoading ? "Redirigiendo..." : "Ingresar con Facebook"}
-                </button>
+               
                 <p className="register-link">
                     ¿No tienes una cuenta? <Link to="/registrarse">Regístrate</Link>
                 </p>

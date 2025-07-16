@@ -36,7 +36,7 @@ export const UsersProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            setUsers(data);
+            setUsers(data.data); // Solo el array de usuarios
             setError(null);
         } catch (error) {
             console.error('Error fetching users:', error);
