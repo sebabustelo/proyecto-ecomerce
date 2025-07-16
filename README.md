@@ -41,13 +41,6 @@ Este proyecto es una tienda online desarrollada en **React + Vite** que permite 
 - Este frontend requiere tener corriendo el backend [gorbac](https://github.com/sebabustelo/gorbac) para funcionar correctamente (usuarios, productos, pedidos, roles, etc).
 - El frontend consume la API REST de ese backend para todas las operaciones de negocio.
 
-## Buenas prácticas y troubleshooting
-
-- **Chequeo de arrays:** Siempre verifica con `Array.isArray()` antes de usar métodos de array.
-- **Estados inicializados:** Los estados de listas se inicializan como `[]` (array vacío).
-- **Mensajes claros:** Si no hay datos, se muestra un mensaje amigable.
-- **Errores comunes:**
-  - `TypeError: Cannot read properties of null (reading 'length')`: Solución, inicializa el array y usa `Array.isArray(array) ? array.length : 0`.
 
 ---
 
