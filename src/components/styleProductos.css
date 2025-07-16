@@ -399,3 +399,21 @@ input[type="number"] {
     padding: 1rem;
   }
 }
+
+@media (max-width: 600px) {
+  .detalle-producto-reviews {
+    padding: 0.5rem 0.2rem;
+    margin-top: 1.2rem;
+  }
+  .form-review {
+    padding: 1rem 0.5rem;
+    font-size: 0.98rem;
+  }
+  .review-item {
+    padding: 0.7rem 0.5rem;
+    font-size: 0.98rem;
+  }
+  .detalle-producto-reviews h2 {
+    font-size: 1.1rem;
+  }
+}

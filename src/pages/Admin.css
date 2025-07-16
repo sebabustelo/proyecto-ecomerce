@@ -58,7 +58,7 @@
 
 /* Grid container específico */
 .admin-page .admin-container {
-    display: grid;
+    
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
@@ -138,7 +138,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.8rem;
+    gap: 0.5rem;
     background: linear-gradient(135deg, var(--admin-dark), var(--admin-accent));
     color: white;
     padding: 0.8rem 1.5rem;
@@ -324,12 +324,8 @@
 .admin-group-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  padding: 0.5em 0.2em 1.2em 0.2em;
-  transition: max-height 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s;
-  opacity: 1;
-  max-height: 2000px;
-  overflow: hidden;
+  gap: 2rem;
+  margin-top: 1.5rem;
 }
 
 .admin-group[aria-expanded="false"] .admin-group-cards {
@@ -338,9 +334,20 @@
   pointer-events: none;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .admin-group-cards {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-group-cards {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .admin-card {
+    min-width: 0;
+    width: 100%;
   }
 }
 
@@ -348,4 +355,181 @@
   .admin-group-cards {
     grid-template-columns: 1fr;
   }
+}
+
+.admin-container {
+  display: block;
+  width: 100%;
+  margin-bottom: 2.5rem;
+}
+.admin-group {
+  width: 100%;
+  margin-bottom: 2.5rem;
+  background: #f8fff8;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(44,139,87,0.07);
+  border: 1.5px solid #e0ffe0;
+  padding: 2rem 1.5rem;
+}
+.admin-group-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.admin-accordion-btn {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+.admin-arrow {
+  margin-right: 8px;
+  font-size: 1.1em;
+}
+.admin-group-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+@media (max-width: 1200px) {
+  .admin-group-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .admin-group-cards {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .admin-card {
+    min-width: 0;
+    width: 100%;
+  }
+}
+.admin-card {
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 1.1rem 0.7rem 1.2rem 0.7rem;
+  min-width: 180px;
+  flex: 1 1 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 340px;
+}
+.admin-icon {
+  font-size: 2.2rem;
+  color: #1A5632;
+  margin-bottom: 0.2rem;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.admin-card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+  margin-top: 0.1rem;
+  text-align: center;
+}
+.admin-desc {
+  font-size: 1.08rem;
+  color: #444;
+  margin-bottom: 0.7rem;
+  margin-top: 0.1rem;
+  text-align: center;
+  line-height: 1.5;
+}
+.admin-link {
+  margin-top: auto;
+}
+.admin-link:hover, .admin-link:focus {
+  background: #166d13;
+  color: #fff;
+  text-decoration: none;
+}
+.admin-stats-btn {
+  background: none;
+  border: none;
+  color: #1A5632;
+  font-weight: 600;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.admin-stats-btn:hover, .admin-stats-btn:focus {
+  color: #166d13;
+  background: none;
+}
+.admin-construccion-msg {
+  margin: 1.5rem auto;
+  padding: 1.2rem 2rem;
+  background: #fffbe7;
+  border: 1px solid #FFD600;
+  border-radius: 10px;
+  max-width: 400px;
+  text-align: center;
+  color: #bfa100;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+.admin-construccion-icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+.admin-construccion-close {
+  margin-left: 16px;
+  background: none;
+  border: none;
+  color: #bfa100;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 18px;
+}
+@media (max-width: 900px) {
+  .admin-group-cards {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .admin-card {
+    min-width: 0;
+    width: 100%;
+  }
+}
+.admin-group-title.accordion-toggle.admin-accordion-btn {
+  background: #1A5632;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0.8em 0 0.8em 0.5em;
+  margin-bottom: 0.5em;
+  border-radius: 10px 10px 0 0;
+  transition: color 0.2s, background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 2px 8px rgba(44,139,87,0.04);
+  position: relative;
+}
+.admin-group-title.accordion-toggle.admin-accordion-btn span {
+  color: #fff;
+}
+.admin-group-title.accordion-toggle.admin-accordion-btn:hover {
+  background: #166d13;
+  color: #fff;
 }

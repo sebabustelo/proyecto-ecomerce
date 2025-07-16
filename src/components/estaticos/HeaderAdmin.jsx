@@ -33,16 +33,7 @@ const Header = () => {
                             <i className="fa-solid fa-dashboard"></i> Admin
                         </Link>
                     </li>
-                    <li className="nav-item">
-                        <Link to="/users" className='nav-link' onClick={handleClose}>
-                            <i className="fa-solid fa-users"></i> Usuarios
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link to="/admin/productos" className='nav-link' onClick={handleClose}>
-                            <i className="fa-solid fa-box"></i> Productos
-                        </Link>
-                    </li>
+                  
                    
                     {user && (
                         <li className="nav-item">

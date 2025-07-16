@@ -72,20 +72,21 @@ const AdminPedidos = () => {
 
   // Función para filtrar pedidos
   useEffect(() => {
-    const filtered = pedidos.filter(pedido => {
-      const searchTermLower = searchTerm.toLowerCase();
-      const usuario = pedido.user ? (pedido.user.name || pedido.user.email) : "";
-      const estado = pedido.status || "";
-      const id = (pedido.id || "").toString();
-      const orderNumber = (pedido.order_number || "").toString();
-      
-      return (
-        usuario.toLowerCase().includes(searchTermLower) ||
-        estado.toLowerCase().includes(searchTermLower) ||
-        id.includes(searchTermLower) ||
-        orderNumber.toLowerCase().includes(searchTermLower)
-      );
-    });
+    const filtered = Array.isArray(pedidos)
+      ? pedidos.filter(pedido => {
+          const searchTermLower = searchTerm.toLowerCase();
+          const usuario = pedido.user ? (pedido.user.name || pedido.user.email) : "";
+          const estado = pedido.status || "";
+          const id = (pedido.id || "").toString();
+          const orderNumber = (pedido.order_number || "").toString();
+          return (
+            usuario.toLowerCase().includes(searchTermLower) ||
+            estado.toLowerCase().includes(searchTermLower) ||
+            id.includes(searchTermLower) ||
+            orderNumber.toLowerCase().includes(searchTermLower)
+          );
+        })
+      : [];
     setFilteredPedidos(filtered);
   }, [searchTerm, pedidos]);
 
@@ -333,7 +334,7 @@ const AdminPedidos = () => {
                   <tfoot>
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', fontWeight: 'bold' }}>
-                        Total de pedidos: {filteredPedidos.length}
+                        Total de pedidos: {Array.isArray(filteredPedidos) ? filteredPedidos.length : 0}
                       </td>
                     </tr>
                   </tfoot>
@@ -374,7 +375,7 @@ const AdminPedidos = () => {
                         )}
                       </div>
 
-                      {pedidoSeleccionado.order_items && pedidoSeleccionado.order_items.length > 0 && (
+                      {pedidoSeleccionado.order_items && Array.isArray(pedidoSeleccionado.order_items) && pedidoSeleccionado.order_items.length > 0 ? (
                         <div>
                           <h3>Items del Pedido:</h3>
                           <div className="order-items-container">
@@ -399,6 +400,11 @@ const AdminPedidos = () => {
                               </tbody>
                             </table>
                           </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <h3>Items del Pedido:</h3>
+                          <p style={{ textAlign: 'center', color: '#888' }}>No hay items en este pedido.</p>
                         </div>
                       )}
 
