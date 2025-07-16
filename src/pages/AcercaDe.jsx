@@ -1,10 +1,15 @@
 import React from "react";
 import Header from "../components/estaticos/Header";
 import Footer from "../components/estaticos/Footer";
+import { Helmet } from 'react-helmet-async';
 
 const AcercaDe = ({ cart }) => {
   return (
     <>
+      <Helmet>
+        <title>Acerca de Nosotros | E-commerce de Mascotas</title>
+        <meta name="description" content="Conoce nuestra historia, misión y valores. Productos artesanales y de calidad para mascotas." />
+      </Helmet>
       <Header cartItems={cart} />
       <main className="main-content">
         <div className="hero-section">

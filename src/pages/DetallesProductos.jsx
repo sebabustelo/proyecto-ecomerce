@@ -5,6 +5,7 @@ import Footer from "../components/estaticos/Footer"
 import loading from '../assets/loading.gif'
 import { API_BASE_URL } from '../utils/apiConfig'
 import '../components/styleProductos.css'
+import { Helmet } from 'react-helmet-async';
 
 // Simula reviews y rating
 const mockReviews = [
@@ -62,6 +63,9 @@ const DetallesProductos = ({ agregarProductoCarrito }) => {
                 <Header />
                 <div className="main-content">
                     <div className="hero-section">
+                        <Helmet>
+                          <title>Cargando producto... | E-commerce de Mascotas</title>
+                        </Helmet>
                         <img src={loading} alt="Cargando..." />
                     </div>
                 </div>
@@ -76,6 +80,9 @@ const DetallesProductos = ({ agregarProductoCarrito }) => {
                 <Header />
                 <div className="main-content">
                     <div className="hero-section">
+                        <Helmet>
+                          <title>Producto no encontrado | E-commerce de Mascotas</title>
+                        </Helmet>
                         <p>{error || "Producto no encontrado"}</p>
                         <Link to="/productos" className="btn">Volver a la galería</Link>
                     </div>
@@ -117,6 +124,10 @@ const DetallesProductos = ({ agregarProductoCarrito }) => {
 
     return (
         <>
+            <Helmet>
+              <title>{(producto.nombre || producto.name) + ' | Detalles | E-commerce de Mascotas'}</title>
+              <meta name="description" content={producto.descripcion || producto.description || 'Detalles y características del producto para mascotas.'} />
+            </Helmet>
             <Header />
             <main className="main-content">
               

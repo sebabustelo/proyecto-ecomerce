@@ -7,6 +7,7 @@ import SearchAndFilters from '../components/SearchAndFilters'
 import { ProductContext } from '../context/ProductContext'
 import { useRealTime } from '../context/RealTimeContext'
 import loading from '../assets/loading.gif'
+import { Helmet } from 'react-helmet-async';
 
 const GaleriaDeProductos = () => {
   const { cargando, productosFiltrados } = useContext(ProductContext);
@@ -32,6 +33,10 @@ const GaleriaDeProductos = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Galería de Productos | E-commerce de Mascotas</title>
+        <meta name="description" content="Explora nuestra galería de cuchas y accesorios premium para mascotas. Calidad, resistencia y confort garantizados." />
+      </Helmet>
       <Header />
       {/* Notificación de actualización */}
       {showUpdateNotification && (

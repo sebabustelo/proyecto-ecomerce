@@ -3,6 +3,7 @@ import Header from "../components/estaticos/Header";
 import Footer from "../components/estaticos/Footer";
 import "./styleContactos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Helmet } from 'react-helmet-async';
 
 
 const Contactos = ({cart}) => {
@@ -22,6 +23,10 @@ const Contactos = ({cart}) => {
 
     return (
         <>
+            <Helmet>
+                <title>Contacto | E-commerce de Mascotas</title>
+                <meta name="description" content="Contáctanos para consultas sobre productos, pedidos o atención personalizada para tu mascota." />
+            </Helmet>
             <Header cartItems={cart} />
             <main className="main-content">
                 <div className="hero-section">

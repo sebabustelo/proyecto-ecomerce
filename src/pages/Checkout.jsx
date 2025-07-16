@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { createOrder, updatePaymentStatus } from '../utils/orderService';
+import { Helmet } from 'react-helmet-async';
 import Header from '../components/estaticos/Header';
 import Footer from '../components/estaticos/Footer';
 import './Checkout.css';
@@ -139,6 +140,10 @@ const Checkout = () => {
   if (orderSuccess) {
     return (
       <>
+        <Helmet>
+          <title>¡Pedido realizado con éxito! | E-commerce de Mascotas</title>
+          <meta name="description" content="Tu pedido fue realizado correctamente. Consulta los detalles o sigue comprando productos para tu mascota." />
+        </Helmet>
         <Header />
         <main className="main-content">
           <div className="checkout-success">
@@ -176,6 +181,10 @@ const Checkout = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Finalizar compra | E-commerce de Mascotas</title>
+        <meta name="description" content="Completa tu compra de cuchas y accesorios premium para mascotas. Pago seguro y envío rápido." />
+      </Helmet>
       <Header />
       <main className="main-content">
         <div className="checkout-container">

@@ -2,12 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/estaticos/Header";
 import Footer from "../components/estaticos/Footer";
+import { Helmet } from 'react-helmet-async';
 
 
 const Home = () => {
     
     return (
         <>
+            <Helmet>
+                <title>Inicio | E-commerce de Mascotas</title>
+                <meta name="description" content="Cuchas y accesorios premium para mascotas. Productos artesanales, resistentes y cómodos para tu compañero peludo." />
+            </Helmet>
             <Header />
 
             <main className="main-content">
