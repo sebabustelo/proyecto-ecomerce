@@ -117,10 +117,12 @@ const Admin = () => {
               )}
             </div>
             {showStatsMsg && (
-              <div className="admin-construccion-msg">
-                <i className="fa-solid fa-person-digging admin-construccion-icon"></i>
-                Sección en construcción
-                <button onClick={() => setShowStatsMsg(false)} className="admin-construccion-close">✕</button>
+              <div className="admin-modal-overlay">
+                <div className="admin-modal-popup">
+                  <i className="fa-solid fa-person-digging admin-construccion-icon"></i>
+                  <div style={{ margin: "1em 0" }}>Estadísticas en construcción</div>
+                  <button onClick={() => setShowStatsMsg(false)} className="admin-construccion-close">✕</button>
+                </div>
               </div>
             )}
           </div>

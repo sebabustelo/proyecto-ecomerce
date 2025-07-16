@@ -1,6 +1,10 @@
 # E-commerce de Cuchas y Accesorios para Mascotas 🐾
 
-Este proyecto es una tienda online desarrollada en **React + Vite** que permite a los usuarios explorar, agregar al carrito y comprar cuchas y accesorios premium para mascotas.
+**Demo online:** [https://juvapets.netlify.app/](https://juvapets.netlify.app/)
+
+**Backend:** Este frontend consume la API REST del proyecto [gorbac (RBAC + carrito en Go)](https://github.com/sebabustelo/gorbac)
+
+Este proyecto es una tienda online desarrollada en **React + Vite** que permite a los usuarios explorar, agregar al carrito y comprar cuchas y accesorios premium para mascotas. Incluye un panel de administración robusto y buenas prácticas de desarrollo frontend.
 
 ## Características principales
 
@@ -8,11 +12,12 @@ Este proyecto es una tienda online desarrollada en **React + Vite** que permite 
 - **Carrito de compras:** Agrega, elimina y ajusta cantidades de productos. Vacía el carrito con un solo clic.
 - **Checkout simulado:** Botón de compra con integración visual a Mercado Pago.
 - **Formulario de contacto:** Permite enviar consultas a la tienda.
-- **Panel de administración:** Acceso protegido por login (simulado, acepta cualquier usuario/contraseña).
+- **Panel de administración:** Acceso protegido por login (simulado, acepta cualquier usuario/contraseña). Permite gestionar productos, usuarios, roles y pedidos.
 - **Rutas protegidas:** Solo usuarios autenticados pueden acceder al panel de administración.
 - **Diseño responsive:** Adaptado para dispositivos móviles y escritorio.
 - **Context API:** Manejo global del carrito y productos.
 - **Estilos modernos:** Uso de CSS modularizado y paleta de colores amigable.
+- **Manejo robusto de arrays y estados:** Siempre se chequea con `Array.isArray()` antes de usar `.map`, `.filter` o `.length` para evitar errores si la API devuelve `null` o `undefined`.
 
 ## Estructura del proyecto
 
@@ -26,3 +31,24 @@ Este proyecto es una tienda online desarrollada en **React + Vite** que permite 
 
 1. Clona el repositorio.
 2. Instala dependencias:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+## Requisitos y arquitectura
+
+- Este frontend requiere tener corriendo el backend [gorbac](https://github.com/sebabustelo/gorbac) para funcionar correctamente (usuarios, productos, pedidos, roles, etc).
+- El frontend consume la API REST de ese backend para todas las operaciones de negocio.
+
+## Buenas prácticas y troubleshooting
+
+- **Chequeo de arrays:** Siempre verifica con `Array.isArray()` antes de usar métodos de array.
+- **Estados inicializados:** Los estados de listas se inicializan como `[]` (array vacío).
+- **Mensajes claros:** Si no hay datos, se muestra un mensaje amigable.
+- **Errores comunes:**
+  - `TypeError: Cannot read properties of null (reading 'length')`: Solución, inicializa el array y usa `Array.isArray(array) ? array.length : 0`.
+
+---
+
+¿Tienes dudas o sugerencias? ¡Contribuye o abre un issue!
