@@ -99,7 +99,7 @@ const Header = () => {
                                     className="nav-link"
                                     onClick={handleClose}
                                 >
-                                    <i className="fa-solid fa-gears"></i> Panel Admin
+                                    <i className="fa-solid fa-gears"></i> Admin
                                 </Link>
                             </li>
                         )}

@@ -14,7 +14,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [orderSuccess, setOrderSuccess] = useState(false);
+
   const [orderData, setOrderData] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentStep, setPaymentStep] = useState('processing'); // processing, success, failed
@@ -86,9 +86,10 @@ const Checkout = () => {
               setOrderData(order);
               // Actualizar estado de pago a 'completed' después de crear el pedido
               await updatePaymentStatus(order.id, 'completed');
-              setOrderSuccess(true);
               clearCart();
               setShowPaymentModal(false);
+              // Redirigir a mis-pedidos después de crear el pedido
+              navigate('/mis-pedidos');
             } catch (err) {
               setError(err.message);
               setShowPaymentModal(false);
@@ -128,8 +129,9 @@ const Checkout = () => {
       setOrderData(order);
       // Actualizar estado de pago a 'completed' después de crear el pedido
       await updatePaymentStatus(order.id, 'completed');
-      setOrderSuccess(true);
       clearCart();
+      // Redirigir a mis-pedidos después de crear el pedido
+      navigate('/mis-pedidos');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -137,47 +139,7 @@ const Checkout = () => {
     }
   };
 
-  if (orderSuccess) {
-    return (
-      <>
-        <Helmet>
-          <title>¡Pedido realizado con éxito! | E-commerce de Mascotas</title>
-          <meta name="description" content="Tu pedido fue realizado correctamente. Consulta los detalles o sigue comprando productos para tu mascota." />
-        </Helmet>
-        <Header />
-        <main className="main-content">
-          <div className="checkout-success">
-            <div className="success-icon">
-              <i className="fa-solid fa-check-circle"></i>
-            </div>
-            <h1>¡Pedido realizado con éxito!</h1>
-            <p>Tu pedido #{orderData?.id} ha sido creado correctamente.</p>
-            <div className="order-details">
-              <h3>Detalles del pedido:</h3>
-              <p><strong>Total:</strong> ${orderData?.total_amount}</p>
-              <p><strong>Estado:</strong> {orderData?.status}</p>
-              <p><strong>Fecha:</strong> {new Date(orderData?.created_at).toLocaleDateString()}</p>
-            </div>
-            <div className="success-actions">
-              <button 
-                className="btn btn-primary"
-                onClick={() => navigate('/productos')}
-              >
-                Continuar comprando
-              </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={() => navigate('/mis-pedidos')}
-              >
-                Ver mis pedidos
-              </button>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+
 
   return (
     <>
