@@ -1,10 +1,27 @@
-import { useContext } from 'react';
-import { CartContext } from '../context/CartContext';
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
+import { useAuth } from "./useAuth";
+import { API_BASE_URL } from "../utils/apiConfig";
 
-export const useCart = () => {
+export function useCart() {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
-}; 
+  const { user, token } = useAuth();
+
+  
+  const clearCartBackend = async () => {
+    if (user && token) {
+      await fetch(`${API_BASE_URL}/cart`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+    context.clearCart(); // limpia el estado local
+  };
+
+  return {
+    ...context,
+    clearCartBackend, // exporta la nueva función
+  };
+} 

@@ -10,7 +10,7 @@ import './Checkout.css';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, getTotalPrice, clearCart } = useCart();
+  const { items, getTotalPrice, clearCartBackend } = useCart();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -86,7 +86,7 @@ const Checkout = () => {
               setOrderData(order);
               // Actualizar estado de pago a 'completed' después de crear el pedido
               await updatePaymentStatus(order.id, 'completed');
-              clearCart();
+              clearCartBackend();
               setShowPaymentModal(false);
               // Redirigir a mis-pedidos después de crear el pedido
               navigate('/mis-pedidos');
@@ -129,7 +129,7 @@ const Checkout = () => {
       setOrderData(order);
       // Actualizar estado de pago a 'completed' después de crear el pedido
       await updatePaymentStatus(order.id, 'completed');
-      clearCart();
+      clearCartBackend();
       // Redirigir a mis-pedidos después de crear el pedido
       navigate('/mis-pedidos');
     } catch (err) {

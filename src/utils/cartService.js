@@ -70,8 +70,8 @@ export const updateCartItem = async (cartItemId, quantity) => {
 // Limpiar el carrito
 export const clearCart = async () => {
   try {
-    const response = await authFetch(`${API_BASE_URL}/cart/clear`, {
-      method: 'POST',
+    const response = await authFetch(`${API_BASE_URL}/cart`, {
+      method: 'DELETE',
     });
     if (!response.ok) {
       throw new Error('Error al limpiar el carrito');

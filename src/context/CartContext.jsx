@@ -341,16 +341,11 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      const success = await cartService.clearCart();
-      if (success) {
-        dispatch({ type: 'CLEAR_CART' });
-      } else {
-        dispatch({ type: 'CLEAR_CART' });
-      }
+      await cartService.clearCart();
     } catch (error) {
       console.error('Error al limpiar carrito:', error);
-      dispatch({ type: 'CLEAR_CART' });
     }
+    dispatch({ type: 'CLEAR_CART' }); // Limpia el estado local siempre
   };
 
   const getTotalItems = () => {
