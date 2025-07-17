@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../utils/apiConfig';
 import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
@@ -318,27 +319,31 @@ const AdminProductos = () => {
                             Productos
                         </h1>
 
-
-
-                        <button
-                            className="add-button"
-                            onClick={() => {
-                                setSelectedProduct(null);
-                                setProductData({
-                                    name: '',
-                                    description: '',
-                                    price: '',
-                                    stock: '',
-                                    category_id: '1',
-                                    image: ''
-                                });
-                                setIsEditing(false);
-                                setShowModal(true);
-                            }}
-                        >
-                            <i className="fa-solid fa-plus"></i>
-                            Nuevo Producto
-                        </button>
+                        <div className="header-buttons">
+                            <button
+                                className="add-button"
+                                onClick={() => {
+                                    setSelectedProduct(null);
+                                    setProductData({
+                                        name: '',
+                                        description: '',
+                                        price: '',
+                                        stock: '',
+                                        category_id: '1',
+                                        image: ''
+                                    });
+                                    setIsEditing(false);
+                                    setShowModal(true);
+                                }}
+                            >
+                                <i className="fa-solid fa-plus"></i>
+                                Nuevo Producto
+                            </button>
+                            <Link to="/admin" className="back-button">
+                                <i className="fa-solid fa-arrow-left"></i>
+                                Volver al Admin
+                            </Link>
+                        </div>
                     </div>
 
                     {/* Barra de búsqueda */}

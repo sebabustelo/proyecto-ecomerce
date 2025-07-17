@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../utils/apiConfig';
 import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
@@ -354,13 +355,12 @@ const AdminApis = () => {
                 <HeaderAdmin />
                 <main className="main-content">
                     <div className="header-container">
-                    <h1 className="main-title">
-                        <i className="fa-solid fa-code" style={{ marginRight: "0.5em" }}></i>
-                        APIs
-                    </h1>
+                        <h1 className="main-title">
+                            <i className="fa-solid fa-code" style={{ marginRight: "0.5em" }}></i>
+                            APIs
+                        </h1>
 
-
-                        <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
+                        <div className="header-buttons">
                             <button
                                 className="add-button"
                                 onClick={() => {
@@ -388,6 +388,10 @@ const AdminApis = () => {
                                 <i className="fa-solid fa-arrows-rotate"></i>
                                 {syncLoading ? 'Sincronizando...' : 'Sincronizar APIs'}
                             </button>
+                            <Link to="/admin" className="back-button">
+                                <i className="fa-solid fa-arrow-left"></i>
+                                Volver al Admin
+                            </Link>
                         </div>
                     </div>
 

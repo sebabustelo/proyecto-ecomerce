@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../utils/apiConfig';
 import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
@@ -335,22 +336,28 @@ const AdminRoles = () => {
                         <i className="fa-solid fa-user-tag main-title-icon"></i>
                         Roles y Permisos
                     </h1>
-                    <button
-                        className="add-button"
-                        onClick={() => {
-                            setSelectedRole(null);
-                            setRoleData({
-                                name: '',
-                                description: '',
-                                apis: []
-                            });
-                            setIsEditing(false);
-                            setShowModal(true);
-                        }}
-                    >
-                        <i className="fa-solid fa-plus"></i>
-                        Nuevo Rol
-                    </button>
+                    <div className="header-buttons">
+                        <button
+                            className="add-button"
+                            onClick={() => {
+                                setSelectedRole(null);
+                                setRoleData({
+                                    name: '',
+                                    description: '',
+                                    apis: []
+                                });
+                                setIsEditing(false);
+                                setShowModal(true);
+                            }}
+                        >
+                            <i className="fa-solid fa-plus"></i>
+                            Nuevo Rol
+                        </button>
+                        <Link to="/admin" className="back-button">
+                            <i className="fa-solid fa-arrow-left"></i>
+                            Volver al Admin
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Barra de búsqueda */}

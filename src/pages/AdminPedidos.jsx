@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../utils/apiConfig";
 import HeaderAdmin from "../components/estaticos/HeaderAdmin";
 import Footer from "../components/estaticos/Footer";
@@ -239,6 +240,12 @@ const AdminPedidos = () => {
               <i className="fa-solid fa-shopping-bag" style={{ marginRight: "0.5em" }}></i>
               Pedidos
             </h1>
+            <div className="header-buttons">
+              <Link to="/admin" className="back-button">
+                <i className="fa-solid fa-arrow-left"></i>
+                Volver al Admin
+              </Link>
+            </div>
           </div>
 
           {/* Barra de búsqueda */}

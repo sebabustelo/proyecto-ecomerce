@@ -23,6 +23,7 @@ import { UserProvider } from './context/UserContext'
 import { UsersProvider } from './context/UsersContext'
 import ResetPassword from './components/ResetPassword'
 import AdminPedidos from './pages/AdminPedidos'
+import AdminEstadisticas from './pages/AdminEstadisticas'
 import ToastContainer from './components/ToastContainer'
 import { ToastProvider, useToast } from './context/ToastContext'
 import { RealTimeProvider } from './context/RealTimeContext'
@@ -97,6 +98,11 @@ function AppRoutes() {
         <Route path='/admin/pedidos' element={
           <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
             <AdminPedidos />
+          </RutasProtegidas>
+        } />
+        <Route path='/admin/estadisticas' element={
+          <RutasProtegidas isAuthenticated={!!user} roles={['admin']}>
+            <AdminEstadisticas />
           </RutasProtegidas>
         } />
         <Route path='/mis-pedidos' element={

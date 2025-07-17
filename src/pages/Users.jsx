@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import HeaderAdmin from '../components/estaticos/HeaderAdmin';
 import Footer from '../components/estaticos/Footer';
 import './Users.css';
@@ -72,8 +73,12 @@ const Users = () => {
                             <i className="fa-solid fa-users" style={{ marginRight: "0.5em" }}></i>
                             Usuarios
                         </h1>
-
-
+                        <div className="header-buttons">
+                            <Link to="/admin" className="back-button">
+                                <i className="fa-solid fa-arrow-left"></i>
+                                Volver al Admin
+                            </Link>
+                        </div>
                     </div>
                     {/* Barra de búsqueda */}
                     <div className="search-container">

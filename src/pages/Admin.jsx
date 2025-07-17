@@ -9,7 +9,7 @@ import AdminPedidos from "../pages/AdminPedidos";
 
 const Admin = () => {
   const [openGroup, setOpenGroup] = useState({ operativa: true, negocio: true });
-  const [showStatsMsg, setShowStatsMsg] = useState(false);
+
 
   return (
     <div className="admin-page">
@@ -67,14 +67,10 @@ const Admin = () => {
                     </div>
                     <h2>Estadísticas</h2>
                     <p className="admin-desc">Visualiza estadísticas y reportes del sistema.</p>
-                    <button
-                      className="admin-link admin-stats-btn"
-                      onClick={() => setShowStatsMsg(true)}
-                      aria-label="Ver estadísticas"
-                    >
+                    <Link to="/admin/estadisticas" className="admin-link" aria-label="Ver estadísticas">
                       <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
                       Ver estadísticas
-                    </button>
+                    </Link>
                   </div>
                 </div>
               )}
@@ -130,15 +126,7 @@ const Admin = () => {
                 </div>
               )}
             </div>
-            {showStatsMsg && (
-              <div className="admin-modal-overlay" role="dialog" aria-modal="true" aria-label="Estadísticas en construcción">
-                <div className="admin-modal-popup">
-                  <i className="fa-solid fa-person-digging admin-construccion-icon" aria-hidden="true"></i>
-                  <div style={{ margin: "1em 0" }}>Estadísticas en construcción</div>
-                  <button onClick={() => setShowStatsMsg(false)} className="admin-construccion-close" aria-label="Cerrar ventana de estadísticas">✕</button>
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
       </main>
