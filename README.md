@@ -41,6 +41,23 @@ Este proyecto es una tienda online desarrollada en **React + Vite** que permite 
 - Este frontend requiere tener corriendo el backend [gorbac](https://github.com/sebabustelo/gorbac) para funcionar correctamente (usuarios, productos, pedidos, roles, etc).
 - El frontend consume la API REST de ese backend para todas las operaciones de negocio.
 
+## Roles de Usuario
+
+El sistema cuenta con dos roles principales:
+
+- **Usuario Cliente:**
+  - Se accede iniciando sesión con Google.
+  - Puede navegar, comprar productos y gestionar su propio carrito y pedidos.
+
+- **Administrador:**
+  - Se accede con el correo `admin@gmail.com` y la contraseña `sebas`.
+  - Tiene acceso al panel de administración donde puede:
+    - Gestionar productos (crear, editar, eliminar)
+    - Gestionar pedidos
+    - Ver estadísticas y reportes
+    - Administrar usuarios y roles
+
+> Si inicias sesión con Google, tendrás permisos de cliente. Solo con el usuario administrador podrás acceder a las funciones avanzadas del panel de administración.
 
 ---
 
