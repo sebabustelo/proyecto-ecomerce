@@ -17,14 +17,12 @@ Este proyecto es una tienda online desarrollada en **React + Vite** que permite 
 - **Diseño responsive:** Adaptado para dispositivos móviles y escritorio.
 - **Context API:** Manejo global del carrito y productos.
 - **Estilos modernos:** Uso de CSS modularizado y paleta de colores amigable.
-- **Manejo robusto de arrays y estados:** Siempre se chequea con `Array.isArray()` antes de usar `.map`, `.filter` o `.length` para evitar errores si la API devuelve `null` o `undefined`.
 
 ## Estructura del proyecto
 
 - `/src/components`: Componentes reutilizables (Carrito, Productos, Header, etc).
 - `/src/pages`: Vistas principales (Home, Galería, Contactos, Admin, etc).
 - `/src/context`: Contexto global para carrito y productos.
-- `/public/data/data.json`: Base de datos simulada de productos.
 - `/public/img`: Imágenes de productos.
 
 ## Instalación y uso
