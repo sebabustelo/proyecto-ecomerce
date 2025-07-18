@@ -24,6 +24,32 @@ const translateStatus = (status) => {
   return statusTranslations[status] || status;
 };
 
+// Tooltip personalizado para PieChart
+const CustomPieTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { status, count } = payload[0].payload;
+    return (
+      <div style={{ background: '#fff', color: '#222', border: '1px solid #ccc', padding: '8px', borderRadius: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <strong>{status}</strong>: Cantidad: {count} pedidos
+      </div>
+    );
+  }
+  return null;
+};
+
+// Tooltip personalizado para BarChart
+const CustomBarTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const { status, count } = payload[0].payload;
+    return (
+      <div style={{ background: '#fff', color: '#222', border: '1px solid #ccc', padding: '8px', borderRadius: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <strong>{status}</strong>: Cantidad: {count} pedidos
+      </div>
+    );
+  }
+  return null;
+};
+
 const AdminEstadisticas = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +103,8 @@ const AdminEstadisticas = () => {
     const dailyData = filteredOrders.reduce((acc, order) => {
       const date = new Date(order.created_at).toLocaleDateString('es-ES', { 
         day: '2-digit', 
-        month: '2-digit' 
+        month: '2-digit',
+        year: '2-digit'
       });
       
       if (!acc[date]) {
@@ -255,10 +282,10 @@ const AdminEstadisticas = () => {
                 <BarChart data={statusData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="status" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="count" fill="#8884d8" />
+                  <YAxis label={{ value: 'Cantidad', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }} />
+                  <Tooltip content={<CustomBarTooltip />} />
+                  <Legend formatter={() => 'Cantidad'} />
+                  <Bar dataKey="count" fill="#8884d8" name="Cantidad" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -279,7 +306,7 @@ const AdminEstadisticas = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ status, count }) => `${status}: ${count}`}
+                    label={({ status, count }) => `${status}: Cantidad: ${count}`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="count"
@@ -288,7 +315,7 @@ const AdminEstadisticas = () => {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip content={<CustomPieTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
