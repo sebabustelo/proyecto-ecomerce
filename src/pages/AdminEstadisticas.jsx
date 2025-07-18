@@ -18,7 +18,8 @@ const translateStatus = (status) => {
     'cancelled': 'Cancelado',
     'shipped': 'Enviado',
     'delivered': 'Entregado',
-    'returned': 'Devuelto'
+    'returned': 'Devuelto',
+    'confirmed': 'Confirmado' 
   };
   return statusTranslations[status] || status;
 };
