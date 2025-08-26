@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { API_BASE_URL } from "../utils/apiConfig";
 
 export const ProductContext = createContext();
@@ -102,4 +102,6 @@ export const ProductProvider = ({ children }) => {
             {children}
         </ProductContext.Provider>
     );
-}; 
+};
+
+export const useProducts = () => useContext(ProductContext); 
