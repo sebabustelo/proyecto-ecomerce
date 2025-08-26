@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import HeaderAdmin from '../components/estaticos/HeaderAdmin';
-import Footer from '../components/estaticos/Footer';
-import { API_BASE_URL } from '../utils/apiConfig';
+import HeaderAdmin from '../../components/estaticos/HeaderAdmin';
+import Footer from '../../components/estaticos/Footer';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './AdminEstadisticas.css';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];

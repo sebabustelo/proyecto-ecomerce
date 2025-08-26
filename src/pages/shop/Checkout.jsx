@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../hooks/useCart';
-import { useAuth } from '../hooks/useAuth';
-import { createOrder, updatePaymentStatus } from '../utils/orderService';
+import { useCart } from '../../hooks/useCart';
+import { useAuth } from '../../hooks/useAuth';
+import { createOrder, updatePaymentStatus } from '../../utils/orderService';
 import { Helmet } from 'react-helmet-async';
-import Header from '../components/estaticos/Header';
-import Footer from '../components/estaticos/Footer';
+import Header from '../../components/estaticos/Header';
+import Footer from '../../components/estaticos/Footer';
 import './Checkout.css';
 
 const Checkout = () => {

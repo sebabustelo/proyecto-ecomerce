@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "../components/estaticos/Header";
-import Footer from "../components/estaticos/Footer";
+import Header from "../../components/estaticos/Header";
+import Footer from "../../components/estaticos/Footer";
 import { Helmet } from 'react-helmet-async';
 
 const AcercaDe = ({ cart }) => {

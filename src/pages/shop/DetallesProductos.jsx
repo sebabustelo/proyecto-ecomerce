@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
-import Header from "../components/estaticos/Header"
-import Footer from "../components/estaticos/Footer"
-import loading from '../assets/loading.gif'
-import { API_BASE_URL } from '../utils/apiConfig'
-import '../components/styleProductos.css'
+import Header from "../../components/estaticos/Header"
+import Footer from "../../components/estaticos/Footer"
+import loading from '../../assets/loading.gif'
+import { API_BASE_URL } from '../../utils/apiConfig'
+import '../../components/styleProductos.css'
 import { Helmet } from 'react-helmet-async';
 
 // Simula reviews y rating

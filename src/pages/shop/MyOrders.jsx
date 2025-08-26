@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { getOrdersByUser } from '../utils/orderService';
-import Header from '../components/estaticos/Header';
-import Footer from '../components/estaticos/Footer';
-import loadingGif from '../assets/loading.gif';
+import { useAuth } from '../../context/AuthContext';
+import { getOrdersByUser } from '../../utils/orderService';
+import Header from '../../components/estaticos/Header';
+import Footer from '../../components/estaticos/Footer';
+import loadingGif from '../../assets/loading.gif';
 import './MyOrders.css';
-import './AdminPedidos.css';
+import '../admin/AdminPedidos.css';
 
 const MyOrders = () => {
   const { user } = useAuth();

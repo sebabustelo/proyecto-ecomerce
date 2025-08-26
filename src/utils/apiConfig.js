@@ -1,5 +1,5 @@
-//export const API_BASE_URL = "http://localhost:8229";
-export const API_BASE_URL = "https://gorbac-production.up.railway.app";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8229";
+//export const API_BASE_URL = "https://gorbac-production.up.railway.app";
 
 // Función helper para obtener headers con autenticación
 export const getAuthHeaders = () => {

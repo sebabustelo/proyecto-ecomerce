@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../components/estaticos/Header";
-import Footer from "../components/estaticos/Footer";
-import Login from "../components/Login";
+import Header from "../../components/estaticos/Header";
+import Footer from "../../components/estaticos/Footer";
+import Login from "../../components/Login";
 import { Helmet } from 'react-helmet-async';
 
 const IniciarSesion = () => {

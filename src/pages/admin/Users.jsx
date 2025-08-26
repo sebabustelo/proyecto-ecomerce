@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import HeaderAdmin from '../components/estaticos/HeaderAdmin';
-import Footer from '../components/estaticos/Footer';
+import HeaderAdmin from '../../components/estaticos/HeaderAdmin';
+import Footer from '../../components/estaticos/Footer';
 import './Users.css';
-import loading_img from '../assets/loading.gif'
-import { useUsers } from '../context/UsersContext';
+import loading_img from '../../assets/loading.gif'
+import { useUsers } from '../../context/UsersContext';
 
 const Users = () => {
     const [showModal, setShowModal] = useState(false);

@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 //import Header from "../components/estaticos/Header";
-import Footer from "../components/estaticos/Footer";
+import Footer from "../../components/estaticos/Footer";
 import "./Admin.css"; // crea este archivo o agrega los estilos a tu CSS global
-import HeaderAdmin from "../components/estaticos/HeaderAdmin";
-import AdminPedidos from "../pages/AdminPedidos";
+import HeaderAdmin from "../../components/estaticos/HeaderAdmin";
+import AdminPedidos from "./AdminPedidos";
 
 const Admin = () => {
   const [openGroup, setOpenGroup] = useState({ operativa: true, negocio: true });

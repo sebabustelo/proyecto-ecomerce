@@ -1,12 +1,12 @@
 import { useContext } from 'react'
 import React, { useState, useEffect } from 'react';
-import Header from '../components/estaticos/Header'
-import Footer from '../components/estaticos/Footer'
-import ProductList from '../components/ProductosList'
-import SearchAndFilters from '../components/SearchAndFilters'
-import { ProductContext } from '../context/ProductContext'
-import { useRealTime } from '../context/RealTimeContext'
-import loading from '../assets/loading.gif'
+import Header from '../../components/estaticos/Header'
+import Footer from '../../components/estaticos/Footer'
+import ProductList from '../../components/ProductosList'
+import SearchAndFilters from '../../components/SearchAndFilters'
+import { ProductContext } from '../../context/ProductContext'
+import { useRealTime } from '../../context/RealTimeContext'
+import loading from '../../assets/loading.gif'
 import { Helmet } from 'react-helmet-async';
 
 const GaleriaDeProductos = () => {

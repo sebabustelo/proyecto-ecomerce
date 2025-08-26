@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Header from "../components/estaticos/Header";
-import Footer from "../components/estaticos/Footer";
+import Header from "../../components/estaticos/Header";
+import Footer from "../../components/estaticos/Footer";
 import "./styleContactos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Helmet } from 'react-helmet-async';

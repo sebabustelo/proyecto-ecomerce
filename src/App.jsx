@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Registrarse from './pages/Registrarse'
-import AcercaDe from './pages/AcercaDe'
-import GaleriaDeProductos from './pages/GaleriaDeProductos'
-import DetallesProductos from './pages/DetallesProductos'
-import Contactos from './pages/Contactos'
-import NotFound from './pages/NotFound'
-import IniciarSesion from './pages/IniciarSesion'
-import Admin from './pages/Admin'
-import Users from './pages/Users'
-import AdminProductos from './pages/AdminProductos'
-import AdminApis from './pages/AdminApis'
-import AdminRoles from './pages/AdminRoles'
-import Checkout from './pages/Checkout'
-import MyOrders from './pages/MyOrders'
+import Home from './pages/shop/Home'
+import Registrarse from './pages/auth/Registrarse'
+import AcercaDe from './pages/info/AcercaDe'
+import GaleriaDeProductos from './pages/shop/GaleriaDeProductos'
+import DetallesProductos from './pages/shop/DetallesProductos'
+import Contactos from './pages/info/Contactos'
+import NotFound from './pages/info/NotFound'
+import IniciarSesion from './pages/auth/IniciarSesion'
+const Admin = lazy(() => import('./pages/admin/Admin'))
+const Users = lazy(() => import('./pages/admin/Users'))
+const AdminProductos = lazy(() => import('./pages/admin/AdminProductos'))
+const AdminApis = lazy(() => import('./pages/admin/AdminApis'))
+const AdminRoles = lazy(() => import('./pages/admin/AdminRoles'))
+import Checkout from './pages/shop/Checkout'
+import MyOrders from './pages/shop/MyOrders'
 import RutasProtegidas from './auth/RutasProtegidas'
 import { ProductProvider } from './context/ProductContext'
 import { CartProvider } from './context/CartContext'
@@ -22,8 +22,8 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { UserProvider } from './context/UserContext'
 import { UsersProvider } from './context/UsersContext'
 import ResetPassword from './components/ResetPassword'
-import AdminPedidos from './pages/AdminPedidos'
-import AdminEstadisticas from './pages/AdminEstadisticas'
+const AdminPedidos = lazy(() => import('./pages/admin/AdminPedidos'))
+const AdminEstadisticas = lazy(() => import('./pages/admin/AdminEstadisticas'))
 import ToastContainer from './components/ToastContainer'
 import { ToastProvider, useToast } from './context/ToastContext'
 import { RealTimeProvider } from './context/RealTimeContext'
@@ -38,7 +38,9 @@ function App() {
             <ProductProvider>
               <CartProvider>
                 <ToastProvider>
-                  <AppRoutes />
+                  <Suspense fallback={<div style={{padding:16}}>Cargando…</div>}>
+                    <AppRoutes />
+                  </Suspense>
                 </ToastProvider>
               </CartProvider>
             </ProductProvider>
