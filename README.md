@@ -67,38 +67,31 @@ src/pages/
 - `/src/context`: Contextos globales (Auth, Cart, Product, User, Users, Toast, RealTime).
 - `/public/img`: Imágenes de productos.
 
-### Importar páginas (recomendado)
+### Importar páginas y componentes
 
-Gracias al `src/pages/index.js`, podés importar las vistas así:
-
+- Con barrel de `pages`:
 ```js
 import { Home, Checkout, Admin, Users } from './pages';
 ```
-
-También podés importar por ruta directa si preferís:
-
+- Con alias `@` (configurado en Vite) y barrels de `components`/`context`:
 ```js
-import Home from './pages/shop/Home';
-import Admin from './pages/admin/Admin';
+import Home from '@/pages/shop/Home';
+import { Header, Footer } from '@/components';
+import { AuthProvider, useAuth } from '@/context';
 ```
 
 ## Configuración de API (backend)
 
-Este frontend consume el backend Gorbac. La URL base se configura en `src/utils/apiConfig.js`.
+La URL base se configura vía variables de entorno de Vite y se lee en `src/utils/apiConfig.js` con `import.meta.env.VITE_API_BASE_URL`.
 
-- Por defecto apunta a desarrollo local:
-
-```js
-export const API_BASE_URL = "http://localhost:8229";
+- Desarrollo (local): crear `.env.local` en la raíz del proyecto
 ```
-
-- Para producción, cambiá la constante o descomentá la línea provista:
-
-```js
-// export const API_BASE_URL = "https://gorbac-production.up.railway.app";
+VITE_API_BASE_URL=http://localhost:8229
 ```
-
-> Tip: si querés usar variables de entorno con Vite, podés crear un `.env.local` con `VITE_API_BASE_URL` y adaptar `apiConfig.js` para leer `import.meta.env.VITE_API_BASE_URL`.
+- Producción: crear `.env.production` o configurar la variable en tu hosting (Netlify, Vercel, etc.)
+```
+VITE_API_BASE_URL=https://gorbac-production.up.railway.app
+```
 
 ## Instalación y uso
 
@@ -116,6 +109,17 @@ export const API_BASE_URL = "http://localhost:8229";
 npm run build
 npm run preview
 ```
+
+## Deploy en Netlify (rápido)
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Environment variables: agregar `VITE_API_BASE_URL` con la URL de tu backend
+- Recomendado: “Clear cache and deploy site” al cambiar variables
+
+## Calidad de código (opcional)
+
+- Hooks de Git con Husky + lint-staged: ejecutan ESLint en archivos staged en cada commit.
 
 ## Requisitos y arquitectura
 
